@@ -1,0 +1,1 @@
+Assume that only product owners can edit/delete their own products, no one elses.
