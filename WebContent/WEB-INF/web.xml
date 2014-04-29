@@ -22,7 +22,14 @@
 	<description>
 		Multiplies times 3, using JSP
  	</description>
- 	
+ 	<servlet>
+ 		<servlet-name>category</servlet-name>
+ 		<servlet-class>CategoryServlet</servlet-class>
+ 	</servlet>
+ 	<servlet-mapping>
+ 		<servlet-name>category</servlet-name>
+ 		<url-pattern>/categories</url-pattern>
+ 	</servlet-mapping>
 	<servlet>
 		<servlet-name>multiplier</servlet-name>
 		<jsp-file>/multiplyJSP.jsp</jsp-file>
