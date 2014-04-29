@@ -24,9 +24,9 @@ public class CategoryDAO {
 			
 			while (rs.next()) {
 				Category cat = new Category();
-				cat.setId(rs.getLong("c_id"));
-				cat.setName(rs.getString("c_name"));
-				cat.setDescription(rs.getString("c_description"));
+				cat.setId(rs.getLong("id"));
+				cat.setName(rs.getString("name"));
+				cat.setDescription(rs.getString("description"));
 				cats.add(cat);
 			}
 		} finally {

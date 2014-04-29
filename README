@@ -2,3 +2,5 @@ Useful Links
 http://met.guc.edu.eg/OnlineTutorials/JSP%20-%20Servlets/Full%20Login%20Example.aspx
 http://stackoverflow.com/questions/5003142/jsp-using-mvc-and-jdbc
 https://github.com/jtestard/CSE135prep
+
+Theres a cse135.sql file in the repo. This will be the standard database schema for our project for now. Will be updated if schema needs changes. Please update your local db to this one.
