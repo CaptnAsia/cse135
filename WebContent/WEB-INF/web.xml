@@ -30,6 +30,15 @@
  	</servlet-mapping>
  	
  	<servlet>
+ 		<servlet-name>signup</servlet-name>
+ 		<servlet-class>cse135.servlet.SignupServlet</servlet-class>
+ 	</servlet>
+ 	<servlet-mapping>
+ 		<servlet-name>signup</servlet-name>
+ 		<url-pattern>/signupAttempt</url-pattern>
+ 	</servlet-mapping>
+ 	
+ 	<servlet>
  		<servlet-name>category</servlet-name>
  		<jsp-file>/categories.jsp</jsp-file>
  	</servlet>

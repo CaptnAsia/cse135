@@ -12,6 +12,13 @@ public class User {
 		this.setState("");
 		this.setOwner(false);
 	}
+	
+	public User(String name, int age, String state, boolean owner) {
+		this.setName(name);
+		this.setAge(age);
+		this.setState(state);
+		this.setOwner(owner);
+	}
 
 	public String getName() {
 		return name;

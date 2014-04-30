@@ -17,7 +17,7 @@ public class LoginServlet extends HttpServlet{
 		String name = req.getParameter("name");
 		User user;
 		try {
-			user = UserDAO.login(name);
+			user = UserDAO.find(name);
 			
 			if (user != null) {
 				 HttpSession session = req.getSession(true);	    

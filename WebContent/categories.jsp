@@ -9,8 +9,7 @@
 <title>Categories</title>
 </head>
 <body>
-<% User current = (User)session.getAttribute("currentSessionUser"); %>
-<%@ include file="header.jsp" %>
+<%@ include file="WEB-INF/header.jsp" %>
 <table border="1">
             <tr>
                 <th>ID</th>
