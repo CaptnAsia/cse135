@@ -31,6 +31,11 @@ public class SignupServlet extends HttpServlet {
 				// Create a new user object to put into the database
 				if (req.getParameter("owner") == "customer")
 					own = false;
+				
+				// Checks if name was blank
+				if (req.getParameter("name") == "" || a < 0) {
+					throw new SQLException();
+				}
 				user = new User(req.getParameter("name"),a,req.getParameter("state"),own);
 				
 				UserDAO.insert(user);
@@ -38,7 +43,7 @@ public class SignupServlet extends HttpServlet {
 				session.setAttribute("currentSessionUser",user); 
 				res.sendRedirect("afterSignup.jsp");
 				
-			} catch (SQLException e) {
+			} catch (SQLException  | NumberFormatException e) {
 				e.printStackTrace();
 				output = "Your signup failed";
 				req.setAttribute("message", output);

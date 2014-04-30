@@ -3,12 +3,13 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
+<link rel="stylesheet" type="text/css" href="stylesheets/main.css">
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>Signup</title>
 </head>
 <body>
-<%@ include file="WEB-INF/header.jsp" %>
-<div><% if (request.getAttribute("message") != null) {%>
+<div class="header"><%@ include file="WEB-INF/header.jsp" %></div>
+<div class="wrapper" style="padding-top: 10px;"><% if (request.getAttribute("message") != null) {%>
 <%= request.getAttribute("message")%>
 <% } else { %>
 You have successfully signed up <% } %>

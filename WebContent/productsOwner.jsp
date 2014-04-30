@@ -14,7 +14,7 @@
 <%@ include file="WEB-INF/header.jsp" %>
 <div class="wrapper">
 	<div class="sidebar"><%@ include file="WEB-INF/categoriesSidebar.jsp" %></div>
-	<div class="content"><h2>Products</h2></div>
+	<div class="content"><div class="title2">Products</div></div>
 </div>
 </body>
 </html>

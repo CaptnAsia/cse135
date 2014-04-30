@@ -1,6 +1,7 @@
-<div class="title1">Categories</div>
+<div class="title2">Categories</div>
+	<div class="list"><a href="products">All Products</a></div>
 	<% List<Category> categories = CategoryDAO.list();
     for(Category c : categories) {%>
-    <div><%= c.getName() %></div>
+    <div class="list"><a href="products?=<%= c.getName() %>"><%= c.getName() %></a></div>
 
     <%} %>

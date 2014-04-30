@@ -11,7 +11,7 @@
 <body>
 <%@ include file="WEB-INF/header.jsp" %>
 <div class="wrapper">
-<h1>Categories</h1>
+<div class="title1">Categories</div>
 	<table border="1">
     	<tr>
         	<th>ID</th>
