@@ -13,5 +13,6 @@
 	<div><input name="name"/></div>
 	<p><input type="Submit" value="Log in"/>
 	</form>
+	New user? <a href="/cse135/signup">Sign up here</a>
 </body>
 </html>

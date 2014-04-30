@@ -9,7 +9,8 @@
 <title>Categories</title>
 </head>
 <body>
-<!-- <@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>  -->
+<% User current = (User)session.getAttribute("currentSessionUser"); %>
+<%@ include file="header.jsp" %>
 <table border="1">
             <tr>
                 <th>ID</th>
