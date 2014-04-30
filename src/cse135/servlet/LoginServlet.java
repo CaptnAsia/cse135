@@ -16,7 +16,7 @@ public class LoginServlet extends HttpServlet{
 	public void doGet (HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
 		HttpSession session = req.getSession(true);
 		if (session.getAttribute("currentSessionUser") != null) {
-			res.sendRedirect("products");
+			req.getRequestDispatcher("products").forward(req,res);
 		} else {
 			req.getRequestDispatcher("login.jsp").forward(req,res);
 		}

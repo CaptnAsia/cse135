@@ -4,35 +4,38 @@
 <html>
 <head>
 <%@ page import="java.util.List" %>
+<link rel="stylesheet" type="text/css" href="stylesheets/main.css">
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>Categories</title>
 </head>
 <body>
 <%@ include file="WEB-INF/header.jsp" %>
+<div class="wrapper">
 <h1>Categories</h1>
-<table border="1">
-            <tr>
-                <th>ID</th>
-                <th>Name</th>
-                <th>Description</th>
-            </tr>
-            	<% List<Category> categories = CategoryDAO.list();
-            	for(Category c : categories) {%>
-            	<tr>
-            		<td><%=c.getId() %></td>
-            		<td><%=c.getName() %></td>
-            		<td><%=c.getDescription() %></td>
-            	</tr>
-            	<%} %>
-            </table>
-            <div style="height:20px;"></div>
-            <div><h2>Add New Categories</h2></div>
-            <form action="newCategory" method="POST">
-            	<div>Category Name:</div>
-            	<div><input name="category"/></div>
-            	<div>Description:</div>
-            	<div><textarea name="description" cols="40" rows="5"></textarea></div>
-            	<div><input type="Submit" name="newCat" value="Submit"/></div>
-            </form>
+	<table border="1">
+    	<tr>
+        	<th>ID</th>
+        	<th>Name</th>
+        	<th>Description</th>
+        </tr>
+        <% List<Category> categories = CategoryDAO.list();
+        for(Category c : categories) {%>
+        <tr>
+        	<td><%=c.getId() %></td>
+        	<td><%=c.getName() %></td>
+        	<td><%=c.getDescription() %></td>
+        </tr>
+        <%} %>
+    </table>
+    <div style="height:20px;"></div>
+    <div><h2>Add New Categories</h2></div>
+    	<form action="newCategory" method="POST">
+        	<div>Category Name:</div>
+        	<div><input name="category"/></div>
+        	<div>Description:</div>
+        	<div><textarea name="description" cols="40" rows="5"></textarea></div>
+        	<div><input type="Submit" name="newCat" value="Submit"/></div>
+        </form>
+</div>
 </body>
 </html>
