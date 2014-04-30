@@ -12,7 +12,7 @@
 	
  	 <welcome-file-list>
  	     <welcome-file>
- 	         menu.html
+ 	         login
  	     </welcome-file>
  	</welcome-file-list>
  	
@@ -26,7 +26,7 @@
  	</servlet>
  	<servlet-mapping>
  		<servlet-name>login</servlet-name>
- 		<url-pattern>/loginAttempt</url-pattern>
+ 		<url-pattern>/login</url-pattern>
  	</servlet-mapping>
  	
  	<servlet>
@@ -35,7 +35,16 @@
  	</servlet>
  	<servlet-mapping>
  		<servlet-name>signup</servlet-name>
- 		<url-pattern>/signupAttempt</url-pattern>
+ 		<url-pattern>/signup</url-pattern>
+ 	</servlet-mapping>
+ 	
+ 	<servlet>
+ 		<servlet-name>product</servlet-name>
+ 		<servlet-class>cse135.servlet.ProductServlet</servlet-class>
+ 	</servlet>
+ 	<servlet-mapping>
+ 		<servlet-name>product</servlet-name>
+ 		<url-pattern>/products</url-pattern>
  	</servlet-mapping>
  	
  	<servlet>

@@ -3,23 +3,18 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
+<%@ page import="java.util.List" %>
 <link rel="stylesheet" type="text/css" href="stylesheets/main.css">
+<link rel="stylesheet" type="text/css" href="stylesheets/products.css">
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>Login Here</title>
+<title>Insert title here</title>
 </head>
 <body>
+
 <%@ include file="WEB-INF/header.jsp" %>
 <div class="wrapper">
-	<h1>Login</h1>
-	<% if (request.getAttribute("error") != null) { %>
-		<div style="margin: 10px 10px 10px 0px; color: red;"><%=request.getAttribute("error") %></div>
-		<% } %>
-	<form action="login" method="POST">
-	<div>Name:</div>
-	<div><input name="name"/></div>
-	<div><input type="Submit" value="Log in"/></div>
-	</form>
-	<div>New user? <a href="/cse135/signup">Sign up here</a></div>
+	<div class="sidebar"><%@ include file="WEB-INF/categoriesSidebar.jsp" %></div>
+	<div class="content"><h2>Products</h2></div>
 </div>
 </body>
 </html>

@@ -14,12 +14,8 @@ import javax.servlet.http.HttpSession;
 public class CategoryServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
 		
-		try {
-			List<Category> categories = CategoryDAO.list();
-			req.setAttribute("categories", categories); //categories list will be available as ${categories} in JSP
+			//List<Category> categories = CategoryDAO.list();
+			//req.setAttribute("categories", categories); //categories list will be available as ${categories} in JSP
 			req.getRequestDispatcher("/products.jsp").forward(req, res);
-		} catch (SQLException e ) {
-			throw new ServletException("Can't obtain categories from database", e);
-		}
 	}
 }

@@ -1,0 +1,10 @@
+.sidebar {
+    float:left;
+    width:200px;
+    background: red;
+    margin: 0px 10px 0px 0px;
+    padding: 0px 0px 10px 10px;
+}
+.content {
+    margin: 0 0 0 100px;
+}

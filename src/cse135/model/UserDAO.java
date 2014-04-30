@@ -3,48 +3,61 @@ package cse135.model;
 import java.sql.*;
 
 public class UserDAO {
+	// static variables
 	private static final String dbName = "jdbc:postgresql://localhost/cse135?user=postgres&password=postgres";
 	static Connection currentCon = null;
 	static ResultSet rs = null;
+	
 	public static User find(String name) throws SQLException {
 		PreparedStatement s = null;
 		User user = null;
+		
 		try {
+			System.out.println("trying to connect to driver thing");
 			try { Class.forName("org.postgresql.Driver");} catch (ClassNotFoundException e) {}
-			currentCon = DriverManager.getConnection(dbName);
-			s = currentCon.prepareStatement("SELECT * FROM Users WHERE name = '"+ name + "'");
-			rs = s.executeQuery();
 			
+			// Connect to the database and execute a query to find a user with the same name as name
+			currentCon = DriverManager.getConnection(dbName);
+			String query = "SELECT * FROM Users WHERE name = '"+ name + "'";
+			s = currentCon.prepareStatement(query);
+			System.out.println(query);
+			rs = s.executeQuery();
+			System.out.println("found");
+			
+			// Checks if anything is returned
 			if (rs.next()) {
+				// Then creates a new user
+				System.out.println("not working");
 				user = new User(rs.getString("name"),rs.getInt("age"),rs.getString("state"),rs.getBoolean("owner"));
-				/*user.setName(rs.getString("name"));
-				user.setAge(rs.getInt("age"));
-				user.setState(rs.getString("state"));
-				user.setOwner(rs.getBoolean("owner"));*/
 			}
 		} finally {
+			// Close all connections
 			if (rs != null) try {rs.close();} catch (SQLException ignore) {}
 			if (s != null) try {s.close();} catch (SQLException ignore) {}
 			if (currentCon != null) try {currentCon.close();} catch (SQLException ignore) {}
 		}
+		// returns a null user or a user with all the objects filled, depending on if a thing was found
 		return user;
 	}
 	
 	public static User insert(User newUser) throws SQLException {
 		PreparedStatement s = null;
 		try {
+			// Connect to database and try to insert newUser into the database
 			try { Class.forName("org.postgresql.Driver");} catch (ClassNotFoundException e) {}
 			currentCon = DriverManager.getConnection(dbName);
 			String query = "INSERT INTO users (name, age, state, owner) VALUES ('"+ newUser.getName() + "', " +
 					newUser.getAge() + ", '" + newUser.getState() + "', " + newUser.isOwner() + ")";
 			s = currentCon.prepareStatement(query);
-			System.out.println(query);
-			rs = s.executeQuery();
+			// Execute the query to update the database
+			int rowCount = s.executeUpdate();
 		} finally {
+			// Close connections
 			if (rs != null) try {rs.close();} catch (SQLException ignore) {}
 			if (s != null) try {s.close();} catch (SQLException ignore) {}
 			if (currentCon != null) try {currentCon.close();} catch (SQLException ignore) {}
 		}
+		// Returns the user that was put into the database
 		return newUser;
 	}
 }
