@@ -86,7 +86,8 @@ CREATE TABLE products (
     sku integer NOT NULL,
     price numeric(5,2) NOT NULL,
     category integer,
-    owner integer NOT NULL
+    owner integer NOT NULL,
+    CONSTRAINT products_price_check CHECK ((price >= (0)::numeric))
 );
 
 
@@ -122,7 +123,8 @@ CREATE TABLE users (
     name text NOT NULL,
     age integer NOT NULL,
     state character(2) NOT NULL,
-    owner boolean NOT NULL
+    owner boolean NOT NULL,
+    CONSTRAINT users_age_check CHECK ((age > 0))
 );
 
 
@@ -175,7 +177,9 @@ ALTER TABLE ONLY users ALTER COLUMN id SET DEFAULT nextval('users_id_seq'::regcl
 --
 
 COPY categories (id, name, description) FROM stdin;
-1	test	description
+2	Test	This is a test category.
+3	Test2	food
+8	Test3	vallartas
 \.
 
 
@@ -183,7 +187,7 @@ COPY categories (id, name, description) FROM stdin;
 -- Name: categories_id_seq; Type: SEQUENCE SET; Schema: public; Owner: mikel
 --
 
-SELECT pg_catalog.setval('categories_id_seq', 1, true);
+SELECT pg_catalog.setval('categories_id_seq', 9, true);
 
 
 --
@@ -206,6 +210,11 @@ SELECT pg_catalog.setval('products_id_seq', 1, false);
 --
 
 COPY users (id, name, age, state, owner) FROM stdin;
+1	Mike	21	CA	t
+2	Test	22	AL	t
+5	eric	21	CA	t
+19	Bryant	21	NE	t
+20	Eric	21	CA	t
 \.
 
 
@@ -213,7 +222,15 @@ COPY users (id, name, age, state, owner) FROM stdin;
 -- Name: users_id_seq; Type: SEQUENCE SET; Schema: public; Owner: mikel
 --
 
-SELECT pg_catalog.setval('users_id_seq', 1, false);
+SELECT pg_catalog.setval('users_id_seq', 20, true);
+
+
+--
+-- Name: categories_name_key; Type: CONSTRAINT; Schema: public; Owner: mikel; Tablespace: 
+--
+
+ALTER TABLE ONLY categories
+    ADD CONSTRAINT categories_name_key UNIQUE (name);
 
 
 --
@@ -238,6 +255,14 @@ ALTER TABLE ONLY products
 
 ALTER TABLE ONLY products
     ADD CONSTRAINT products_sku_key UNIQUE (sku);
+
+
+--
+-- Name: users_name_key; Type: CONSTRAINT; Schema: public; Owner: mikel; Tablespace: 
+--
+
+ALTER TABLE ONLY users
+    ADD CONSTRAINT users_name_key UNIQUE (name);
 
 
 --

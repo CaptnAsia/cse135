@@ -12,7 +12,7 @@
 	
  	 <welcome-file-list>
  	     <welcome-file>
- 	         login
+ 	        login
  	     </welcome-file>
  	</welcome-file-list>
  	
@@ -36,6 +36,15 @@
  	<servlet-mapping>
  		<servlet-name>signup</servlet-name>
  		<url-pattern>/signup</url-pattern>
+ 	</servlet-mapping>
+ 	
+ 	<servlet>
+ 		<servlet-name>newCategory</servlet-name>
+ 		<servlet-class>cse135.servlet.CategoryServlet</servlet-class>
+ 	</servlet>
+ 	<servlet-mapping>
+ 		<servlet-name>newCategory</servlet-name>
+ 		<url-pattern>/newCategory</url-pattern>
  	</servlet-mapping>
  	
  	<servlet>

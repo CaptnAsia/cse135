@@ -7,14 +7,14 @@
 <link rel="stylesheet" type="text/css" href="stylesheets/main.css">
 <link rel="stylesheet" type="text/css" href="stylesheets/products.css">
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>Insert title here</title>
+<title>Products</title>
 </head>
 <body>
 
 <%@ include file="WEB-INF/header.jsp" %>
 <div class="wrapper">
 	<div class="sidebar"><%@ include file="WEB-INF/categoriesSidebar.jsp" %></div>
-	<div class="content"><div class="title2">Products</div></div>
+	<div class="products"><div class="title2">Products</div></div>
 </div>
 </body>
 </html>

@@ -12,6 +12,9 @@
 <%@ include file="WEB-INF/header.jsp" %>
 <div class="wrapper">
 <div class="title1">Categories</div>
+    <% if (request.getAttribute("error") != null) { %>
+		<div style="margin: 10px 10px 10px 0px; color: red;"><%=request.getAttribute("error") %></div>
+		<% } %>
 	<table border="1">
     	<tr>
         	<th>ID</th>
@@ -31,7 +34,7 @@
     <div><h2>Add New Categories</h2></div>
     	<form action="newCategory" method="POST">
         	<div>Category Name:</div>
-        	<div><input name="category"/></div>
+        	<div><input name="name"/></div>
         	<div>Description:</div>
         	<div><textarea name="description" cols="40" rows="5"></textarea></div>
         	<div><input type="Submit" name="newCat" value="Submit"/></div>

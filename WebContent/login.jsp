@@ -10,7 +10,7 @@
 <body>
 <%@ include file="WEB-INF/header.jsp" %>
 <div class="wrapper">
-	<h1>Login</h1>
+	<div class="title1">Login</div>
 	<% if (request.getAttribute("error") != null) { %>
 		<div style="margin: 10px 10px 10px 0px; color: red;"><%=request.getAttribute("error") %></div>
 		<% } %>
