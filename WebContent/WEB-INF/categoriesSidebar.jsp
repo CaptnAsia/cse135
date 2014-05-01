@@ -1,4 +1,5 @@
 <div class="title2">Categories</div>
+<div style="height:10px;"></div>
 	<div class="list"><a href="products">All Products</a></div>
 	<% List<Category> categories = CategoryDAO.list();
     for(Category c : categories) {%>

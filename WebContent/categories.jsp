@@ -23,6 +23,8 @@
         	<th>ID</th>
         	<th>Name</th>
         	<th>Description</th>
+        	<th>Update</th>
+        	<th>Delete</th>
         </tr>
         <% List<Category> categories = (List<Category>)request.getAttribute("list");
         Hashtable<Long,Boolean> table = (Hashtable<Long,Boolean>)request.getAttribute("delete");

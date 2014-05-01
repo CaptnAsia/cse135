@@ -7,6 +7,14 @@ public class Product {
 	private double price;
 	private long owner;
 	
+	public Product() {
+		this.name = "";
+		this.sku = 0;
+		this.category = 0;
+		this.price = 0;
+		this.owner = 0;
+	}
+	
 	public Product (String name, long sku, int category, double price, long owner) {
 		this.setName(name);
 		this.setSku(sku);

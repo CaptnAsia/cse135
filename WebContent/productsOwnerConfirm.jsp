@@ -9,8 +9,15 @@
 </head>
 <body>
 <div class="header"><%@ include file="WEB-INF/header.jsp" %></div>
-<div style="height:20px;"></div>
-<div class="wrapper"><%= request.getAttribute("error") %></div>
-
+<div class="wrapper">
+	<div class="title2">Confirmation Page</div>
+	<div style="height:10px;"></div>
+	<% Product p = (Product)request.getAttribute("product"); %>
+	<div>Successfully added new product!</div>
+	<div style="height:10px;"></div>
+	<div>Name:  <%= p.getName() %></div>
+	<div>SKU:   <%= p.getSku() %></div>
+	<div>Price: $<%= p.getPrice() %></div>
+</div>
 </body>
 </html>

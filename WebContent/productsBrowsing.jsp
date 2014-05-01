@@ -7,10 +7,9 @@
 <link rel="stylesheet" type="text/css" href="stylesheets/main.css">
 <link rel="stylesheet" type="text/css" href="stylesheets/products.css">
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>Products</title>
+<title>Browse for Products</title>
 </head>
 <body>
-
 <%@ include file="WEB-INF/header.jsp" %>
 <div class="wrapper">
 	<div class="sidebar"><%@ include file="WEB-INF/categoriesSidebar.jsp" %></div>
@@ -19,8 +18,12 @@
     <div style="height:10px;"></div>
     <form action="products" method="GET">
     	<div>Search (by Name):</div>
+    	<% if (session.getAttribute("currentSessionUser") != null) { %>
     	<div><input name="search"/></div>
     	<div><input type="Submit" value="Go"/></div>
+    	<% } else { %>
+    	<div>Please <a href="login">login</a> before you can search.</div>
+    	<%} %>
     </form>
     <div style="height:10px;"></div>
 	<table border="1">
@@ -37,32 +40,10 @@
         	if (filterName == "" || p.getName().toLowerCase().contains(filterName.toLowerCase()) ) {%>
         <tr>
         	<td><%= p.getSku() %></td>
-        	<td><%= p.getName() %></td>
+        	<td><a href="#"><%= p.getName() %></a></td>
         	<td>$<%= p.getPrice() %></td>
         </tr>
         <% } } %>
     </table>
-    <div style="height:10px;"></div>
-    <div><h2>Add New Product</h2></div>
-    	<form action="products" method="POST">
-    		<div>Category:</div>
-			<select name="category">
-			<% List<Category> cats = CategoryDAO.list();
-			for(Category c : cats) {%>
-			<option value="<%=c.getId()%>"><%=c.getName()%></option>
-			<% } %>
-			</select>
-			<div style="height:10px;"></div>
-        	<div>Product Name:</div>
-        	<div><input name="name"/></div>
-        	<div>SKU:</div>
-        	<div><input name="sku"/></div>
-        	<div>Price:</div>
-        	<div><input name="price"/></div>
-        	<div style="height:10px;"></div>
-        	<div><input type="Submit" name="newProd" value="Submit"/></div>
-        </form>
-	</div>
-</div>
 </body>
 </html>

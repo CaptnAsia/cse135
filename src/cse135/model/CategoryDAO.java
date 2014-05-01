@@ -58,4 +58,12 @@ public class CategoryDAO {
 		// Returns the user that was put into the database
 		return rowCount;
 	}
+	
+	public static long find(String name) throws SQLException {
+        long catID = -1;
+        for(Category c : list())
+     	   if (c.getName().equals(name))
+     		   catID = c.getId();
+        return catID;
+	}
 }

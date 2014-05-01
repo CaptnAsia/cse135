@@ -1,7 +1,9 @@
 package cse135.model;
 
 import java.sql.*;
+import java.util.ArrayList;
 import java.util.Hashtable;
+import java.util.*;
 
 public class ProductDAO {
 	private static final String dbName = "jdbc:postgresql://localhost/cse135?user=postgres&password=postgres";
@@ -27,6 +29,40 @@ public class ProductDAO {
 		}
 		
 		return table;
+	}
+	
+	public static List<Product> list(long id) throws SQLException{
+		PreparedStatement s = null;
+		List<Product> products = new ArrayList<Product>();
+
+         // Open a connection to the database using DriverManager
+
+		try {
+			try {Class.forName("org.postgresql.Driver");} catch (ClassNotFoundException ignore) {}
+			currentCon = DriverManager.getConnection(dbName);
+			String query;
+			if (id == -1)
+				query = "SELECT * FROM products ORDER BY sku ASC";
+			else
+				query = "SELECT * FROM products WHERE category = " + id + " ORDER BY sku ASC";
+			s = currentCon.prepareStatement(query);
+			rs = s.executeQuery();
+			
+			while (rs.next()) {
+				Product product = new Product();
+				product.setName(rs.getString("name"));
+				product.setSku(rs.getLong("sku"));
+				product.setCategory(rs.getInt("category"));
+				product.setPrice(rs.getDouble("price"));
+				product.setOwner(rs.getLong("owner"));
+				products.add(product);
+			}
+		} finally {
+			if (rs != null) try {rs.close();} catch (SQLException ignore) {}
+			if (s != null) try {s.close();} catch (SQLException ignore) {}
+			if (currentCon != null) try {currentCon.close();} catch (SQLException ignore) {}
+		}
+		return products;
 	}
 	
 	public static int insert(Product newProduct) throws SQLException {
