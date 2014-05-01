@@ -18,6 +18,8 @@
 	<div class="title2">Products</div>
     <div style="height:10px;"></div>
     <form action="products" method="GET">
+    	<%if (request.getParameter("category") != null) { %>
+    	<input type="hidden" name="category" value="<%=request.getParameter("category") %>"/> <%} %>
     	<div>Search (by Name):</div>
     	<div><input name="search"/></div>
     	<div><input type="Submit" value="Go"/></div>
