@@ -6,7 +6,9 @@
 if (current == null) {%>
 <a href="login">Login</a> or <a href="signup">Sign Up</a>
 <% } else { %>
-Hello <%=current.getName() %> | <a href="products">Products</a>
- | <a href="/cse135/categories">Categories</a>
+Hello <%=current.getName() %> | <%
+if (current.isOwner()) { %><a href="categories">Categories</a> | 
+<% } %><a href="products">Products</a>
+ | 
 <%} %></div></div>
 </div>

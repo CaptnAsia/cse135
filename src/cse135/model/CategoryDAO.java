@@ -19,7 +19,7 @@ public class CategoryDAO {
 			currentCon = DriverManager.getConnection(
 					"jdbc:postgresql://localhost/cse135?" +
 				    "user=postgres&password=postgres");
-			s = currentCon.prepareStatement("SELECT * FROM categories");
+			s = currentCon.prepareStatement("SELECT * FROM categories ORDER BY name ASC");
 			rs = s.executeQuery();
 			
 			while (rs.next()) {
@@ -37,15 +37,15 @@ public class CategoryDAO {
 		return cats;
 	}
 	
-	public static int insert(Category newCategory) throws SQLException {
+	public static int alter(String query) throws SQLException {
 		PreparedStatement s = null;
 		int rowCount;
 		try {
 			// Connect to database and try to insert newUser into the database
 			try { Class.forName("org.postgresql.Driver");} catch (ClassNotFoundException e) {}
 			currentCon = DriverManager.getConnection(dbName);
-			String query = "INSERT INTO categories (name, description) VALUES (" + "'" + 
-					newCategory.getName() + "', '" + newCategory.getDescription() + "')";
+			/*String query = "INSERT INTO categories (name, description) VALUES (" + "'" + 
+					newCategory.getName() + "', '" + newCategory.getDescription() + "')";*/
 			s = currentCon.prepareStatement(query);
 			// Execute the query to update the database
 			rowCount = s.executeUpdate();

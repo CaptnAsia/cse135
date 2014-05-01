@@ -15,6 +15,32 @@
 <div class="wrapper">
 	<div class="sidebar"><%@ include file="WEB-INF/categoriesSidebar.jsp" %></div>
 	<div class="products"><div class="title2">Products</div></div>
+	
+	<table border="1">
+    	<tr>
+        	<th>SKU</th>
+        	<th>Name</th>
+        	<th>Price</th>
+        </tr>
+        <tr>
+        	<td>000</td>
+        	<td>Christian Fries</td>
+        	<td>$10</td>
+        </tr>
+    </table>
+    <div style="height:20px;"></div>
+    <div><h2>Add New Product</h2></div>
+    	<form action="products" method="POST">
+        	<div>Product Name:</div>
+        	<div><input name="name"/></div>
+        	<div>SKU:</div>
+        	<div><input name="sku"/></div>
+        	<div>Price:</div>
+        	<div><input name="price"/></div>
+        	<div>Category:</div>
+        	<div><input name="category"/></div>
+        	<div><input type="Submit" name="newProd" value="Submit"/></div>
+        </form>
 </div>
 </body>
 </html>

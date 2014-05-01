@@ -29,8 +29,11 @@ public class SignupServlet extends HttpServlet {
 				boolean own = true;
 				
 				// Create a new user object to put into the database
-				if (req.getParameter("owner") == "customer")
+				//System.out.println("user is: " + req.getParameter("owner"));
+				if (req.getParameter("owner").contentEquals("customer")) {
+					//System.out.println("user is customer");
 					own = false;
+				}
 				
 				// Checks if name was blank
 				if (req.getParameter("name") == "" || a < 0) {

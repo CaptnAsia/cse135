@@ -26,7 +26,7 @@ public class LoginServlet extends HttpServlet{
 		User user;
 		try {
 			// First try to find if the user exists
-			System.out.println("Trying to find user");
+			// System.out.println("Trying to find user");
 			user = UserDAO.find(name);
 			
 			if (user != null) {
@@ -41,7 +41,7 @@ public class LoginServlet extends HttpServlet{
 		} catch (SQLException e) {
 			e.printStackTrace();
 			// If no user found of the given name then redirect to login page with error shown
-			System.out.println("something happened");
+			//System.out.println("something happened");
 			String error = "The provided name " + name + " is not known.";
 			req.setAttribute("error", error);
 			req.getRequestDispatcher("login.jsp").forward(req, res);

@@ -7,7 +7,7 @@
 <web-app>
 
 	<!--  General Web Application Description -->
-	<display-name>Multiplier built as JSP</display-name>
+	<display-name>eCommerce Application</display-name>
 
 	
  	 <welcome-file-list>
@@ -17,7 +17,7 @@
  	</welcome-file-list>
  	
 	<description>
-		Multiplies times 3, using JSP
+		Web Application made in UCSD's Spring 2014 CSE 135 class.
  	</description>
  	
  	<servlet>
@@ -38,38 +38,30 @@
  		<url-pattern>/signup</url-pattern>
  	</servlet-mapping>
  	
- 	<servlet>
- 		<servlet-name>newCategory</servlet-name>
+    <servlet>
+ 		<servlet-name>categories</servlet-name>
  		<servlet-class>cse135.servlet.CategoryServlet</servlet-class>
  	</servlet>
  	<servlet-mapping>
- 		<servlet-name>newCategory</servlet-name>
- 		<url-pattern>/newCategory</url-pattern>
+ 		<servlet-name>categories</servlet-name>
+ 		<url-pattern>/categories</url-pattern>
  	</servlet-mapping>
  	
  	<servlet>
- 		<servlet-name>product</servlet-name>
+ 		<servlet-name>products</servlet-name>
  		<servlet-class>cse135.servlet.ProductServlet</servlet-class>
  	</servlet>
  	<servlet-mapping>
- 		<servlet-name>product</servlet-name>
+ 		<servlet-name>products</servlet-name>
  		<url-pattern>/products</url-pattern>
  	</servlet-mapping>
  	
- 	<servlet>
- 		<servlet-name>category</servlet-name>
- 		<jsp-file>/categories.jsp</jsp-file>
- 	</servlet>
- 	<servlet-mapping>
- 		<servlet-name>category</servlet-name>
- 		<url-pattern>/categories</url-pattern>
- 	</servlet-mapping>
+
  	
 	<servlet>
 		<servlet-name>multiplier</servlet-name>
 		<jsp-file>/multiplyJSP.jsp</jsp-file>
 	</servlet>
-
 	<servlet-mapping>
 		<servlet-name>multiplier</servlet-name>
 		<url-pattern>/multiply</url-pattern>
