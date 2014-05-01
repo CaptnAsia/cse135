@@ -14,7 +14,7 @@
 <%@ include file="WEB-INF/header.jsp" %>
 <div class="wrapper">
 	<div class="sidebar"><%@ include file="WEB-INF/categoriesSidebar.jsp" %></div>
-	<div class="products"><div class="title2">Products</div></div>
+	<div class="products"><div class="title2">Products</div>
 	
 	<table border="1">
     	<tr>
@@ -38,9 +38,15 @@
         	<div>Price:</div>
         	<div><input name="price"/></div>
         	<div>Category:</div>
-        	<div><input name="category"/></div>
+			<select name="category">
+			<% List<Category> cats = CategoryDAO.list();
+            for(Category c : cats) {%>
+			<option value="<%=c.getId()%>"><%=c.getName()%></option>
+			<% } %>
+			</select>
         	<div><input type="Submit" name="newProd" value="Submit"/></div>
         </form>
+</div>
 </div>
 </body>
 </html>

@@ -19,6 +19,7 @@ public class ProductServlet extends HttpServlet{
 		req.getRequestDispatcher("productsOwner.jsp").forward(req,res);
 	}
 	public void doPost (HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
+		HttpSession session = req.getSession(true);
 		String error = "";
 		Product product;
 		
@@ -34,11 +35,14 @@ public class ProductServlet extends HttpServlet{
 			if (req.getParameter("price") == "") {
 					throw new SQLException("No price entered");
 			}
+			int sku = Integer.parseInt(req.getParameter("sku"));
 			double price = Double.parseDouble(req.getParameter("price"));
+			int category = Integer.parseInt(req.getParameter("category"));
+			long owner = ((User)session.getAttribute("currentSessionUser")).getId();
 			
-			product = new Product(req.getParameter("name"), 0, req.getParameter("category"), price, new String("owner"));
+			product = new Product(req.getParameter("name"), sku, category, price, owner );
 			ProductDAO.insert(product);
-			res.sendRedirect("product");
+			res.sendRedirect("productsOwner.jsp");
 		} catch (SQLException | NumberFormatException e) {
 			e.printStackTrace();
 			error = "An error occured.";

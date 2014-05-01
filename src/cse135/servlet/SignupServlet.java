@@ -39,9 +39,9 @@ public class SignupServlet extends HttpServlet {
 				if (req.getParameter("name") == "" || a < 0) {
 					throw new SQLException();
 				}
-				user = new User(req.getParameter("name"),a,req.getParameter("state"),own);
+				user = new User(req.getParameter("name"),a,req.getParameter("state"),own , 0);
 				
-				UserDAO.insert(user);
+				user.setId(UserDAO.insert(user));
 				HttpSession session = req.getSession(true);
 				session.setAttribute("currentSessionUser",user); 
 				res.sendRedirect("afterSignup.jsp");

@@ -5,6 +5,7 @@ public class User {
 	private int age;
 	private String state;
 	private boolean owner;
+	private long id;
 	
 	public User() {
 		this.setName("");
@@ -13,11 +14,12 @@ public class User {
 		this.setOwner(false);
 	}
 	
-	public User(String name, int age, String state, boolean owner) {
+	public User(String name, int age, String state, boolean owner, long id) {
 		this.setName(name);
 		this.setAge(age);
 		this.setState(state);
 		this.setOwner(owner);
+		this.setId(id);
 	}
 
 	public String getName() {
@@ -51,5 +53,15 @@ public class User {
 	public void setOwner(boolean owner) {
 		this.owner = owner;
 	}
+
+	public long getId() {
+		return id;
+	}
+
+	public void setId(long id) {
+		this.id = id;
+	}
+	
+
 
 }

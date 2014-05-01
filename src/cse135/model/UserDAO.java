@@ -26,9 +26,9 @@ public class UserDAO {
 			
 			// Checks if anything is returned
 			if (rs.next()) {
-				// Then creates a new user
+				// Then creates a new user90
 				System.out.println("not working");
-				user = new User(rs.getString("name"),rs.getInt("age"),rs.getString("state"),rs.getBoolean("owner"));
+				user = new User(rs.getString("name"),rs.getInt("age"),rs.getString("state"),rs.getBoolean("owner"),rs.getLong("id"));
 			}
 		} finally {
 			// Close all connections
@@ -40,8 +40,9 @@ public class UserDAO {
 		return user;
 	}
 	
-	public static User insert(User newUser) throws SQLException {
+	public static long insert(User newUser) throws SQLException {
 		PreparedStatement s = null;
+		long rowCount = 0;
 		try {
 			// Connect to database and try to insert newUser into the database
 			try { Class.forName("org.postgresql.Driver");} catch (ClassNotFoundException e) {}
@@ -50,7 +51,7 @@ public class UserDAO {
 					newUser.getAge() + ", '" + newUser.getState() + "', " + newUser.isOwner() + ")";
 			s = currentCon.prepareStatement(query);
 			// Execute the query to update the database
-			int rowCount = s.executeUpdate();
+			rowCount = s.executeUpdate();
 		} finally {
 			// Close connections
 			if (rs != null) try {rs.close();} catch (SQLException ignore) {}
@@ -58,6 +59,6 @@ public class UserDAO {
 			if (currentCon != null) try {currentCon.close();} catch (SQLException ignore) {}
 		}
 		// Returns the user that was put into the database
-		return newUser;
+		return rowCount;
 	}
 }

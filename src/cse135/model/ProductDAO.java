@@ -36,8 +36,8 @@ public class ProductDAO {
 			try { Class.forName("org.postgresql.Driver");} catch (ClassNotFoundException e) {}
 			currentCon = DriverManager.getConnection(dbName);
 			String query = "INSERT INTO products (name, sku, category, price, owner) VALUES (" + "'" + 
-					newProduct.getName() + "', " + newProduct.getSku() + ", '" + newProduct.getCategory() + "', " +
-					newProduct.getPrice() + ", '" + newProduct.getOwner() + "')";
+					newProduct.getName() + "', " + newProduct.getSku() + ", " + newProduct.getCategory() + ", " +
+					newProduct.getPrice() + ", " + newProduct.getOwner() + ")";
 			s = currentCon.prepareStatement(query);
 			// Execute the query to update the database
 			s.executeUpdate();

@@ -3,11 +3,11 @@ package cse135.model;
 public class Product {
 	private String name;
 	private long sku;
-	private String category;
+	private int category;
 	private double price;
-	private String owner;
+	private long owner;
 	
-	public Product (String name, long sku, String category, double price, String owner) {
+	public Product (String name, long sku, int category, double price, long owner) {
 		this.setName(name);
 		this.setSku(sku);
 		this.setCategory(category);
@@ -31,11 +31,11 @@ public class Product {
 		this.sku = sku;
 	}
 
-	public String getCategory() {
+	public int getCategory() {
 		return category;
 	}
 
-	public void setCategory(String category) {
+	public void setCategory(int category) {
 		this.category = category;
 	}
 
@@ -47,11 +47,11 @@ public class Product {
 		this.price = price;
 	}
 
-	public String getOwner() {
+	public long getOwner() {
 		return owner;
 	}
 
-	public void setOwner(String owner) {
+	public void setOwner(long owner) {
 		this.owner = owner;
 	}
 }
