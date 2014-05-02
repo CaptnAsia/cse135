@@ -17,6 +17,7 @@ import cse135.model.CategoryDAO;
 import cse135.model.ProductDAO;
 import cse135.model.User;
 import cse135.model.UserDAO;
+import cse135.model.Order;
 
 public class OrderServlet extends HttpServlet{
 	protected void doGet (HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {

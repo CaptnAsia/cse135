@@ -55,13 +55,22 @@
  		<url-pattern>/products</url-pattern>
  	</servlet-mapping>
  	
-	<servlet>
- 		<servlet-name>buy</servlet-name>
+ 	<servlet>
+ 		<servlet-name>order</servlet-name>
  		<servlet-class>cse135.servlet.OrderServlet</servlet-class>
  	</servlet>
  	<servlet-mapping>
- 		<servlet-name>buy</servlet-name>
+ 		<servlet-name>order</servlet-name>
  		<url-pattern>/order</url-pattern>
+ 	</servlet-mapping>
+ 	
+ 	<servlet>
+ 		<servlet-name>buyCart</servlet-name>
+ 		<servlet-class>cse135.servlet.BuyCartServlet</servlet-class>
+ 	</servlet>
+ 	<servlet-mapping>
+ 		<servlet-name>buyCart</servlet-name>
+ 		<url-pattern>/buyCart</url-pattern>
  	</servlet-mapping>
  	
 	<servlet>
