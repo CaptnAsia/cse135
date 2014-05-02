@@ -11,6 +11,10 @@
 <body>
 <div class="header"><%@ include file="WEB-INF/header.jsp" %></div>
 <div class="wrapper">
+	<% if ( request.getAttribute("error") != null ) { %>
+	<div style="height:20px;"></div>
+	<%= request.getAttribute("error") %>
+    <% } else { %>
 	<div class="title2">Confirmation Page</div>
 	<div style="height:10px;"></div>
 	<% Product p = (Product)request.getAttribute("product");
@@ -20,6 +24,7 @@
 	<div>Name:  <%= p.getName() %></div>
 	<div>SKU:   <%= p.getSku() %></div>
 	<div>Price: $<%= df.format(p.getPrice()) %></div>
+	<% } %>
 </div>
 </body>
 </html>

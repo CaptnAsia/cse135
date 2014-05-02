@@ -19,29 +19,25 @@ import cse135.model.UserDAO;
 
 public class ProductServlet extends HttpServlet{
 	protected void doGet (HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
-		String currCat = "";
-		String filter = "";
 		HttpSession session = req.getSession(true);
 		User user = (User)session.getAttribute("currentSessionUser");
 		
-		/*String currCat = (String)req.getAttribute("currCat");
-        long catID = CategoryDAO.find(currCat);
-        String filterName = (String)req.getAttribute("filter");
-        System.out.println("filterName = '" + filterName + "'");
-        List<Product> products = ProductDAO.list();*/
-		
-		if ( req.getParameterNames().hasMoreElements() ) {
-			currCat = req.getParameterValues(req.getParameterNames().nextElement())[0];
-		}
-		filter = (String)req.getParameter("search");
+		String currCat = (String)req.getParameter("category");
+		String filter = (String)req.getParameter("search");
 		try {
 			long catID;
+			// If there's no category filter, search for all products
 			if (currCat == null)
 				catID = -1;
-			else
+			else 
 				catID = CategoryDAO.find(currCat);
+			
+			// List all the products, if there's a category filter, only list products
+			// that are in that category
 			List<Product> products = ProductDAO.list(catID);
 			req.setAttribute("productList", products);
+			
+			// Set's the filter from the search bar
 			if ( filter == null ) {
 				req.setAttribute("filter", "");
 			}
@@ -55,9 +51,8 @@ public class ProductServlet extends HttpServlet{
 		} catch (SQLException e) {
 			String error = "An error occured while trying display the products.";
 			req.setAttribute("error", error);
-			req.getRequestDispatcher("productsOwnerError.jsp").forward(req, res);
+			req.getRequestDispatcher("productsOwnerConfirm.jsp").forward(req, res);
 		}
-		//req.setAttribute("currCat", currCat);
 		
 	}
 	
@@ -65,9 +60,12 @@ public class ProductServlet extends HttpServlet{
 		HttpSession session = req.getSession(true);
 		String error = "";
 		Product product;
+		int sku = 0;
+		double price = 0;
+		int category = 0;
 		
 		try {
-			// Checks if name was blank
+			// Checks if any attributes were blank
 			if (req.getParameter("name") == "") {
 				throw new SQLException("No name entered");
 			}
@@ -77,36 +75,47 @@ public class ProductServlet extends HttpServlet{
 			if (req.getParameter("price") == "") {
 				throw new SQLException("No price entered");
 			}
-			int sku = Integer.parseInt(req.getParameter("sku"));
-			double price = Double.parseDouble(req.getParameter("price"));
-			int category = Integer.parseInt(req.getParameter("category"));
+			if (req.getParameter("delete") == null) {
+				// need to set variables for posts that are not delete posts
+				sku = Integer.parseInt(req.getParameter("sku"));
+				price = Double.parseDouble(req.getParameter("price"));
+				category = Integer.parseInt(req.getParameter("category"));
+			}
 			if (req.getParameter("newProd") != null) {
+				// First Case: Inserting a new Product
 				long owner = ((User)session.getAttribute("currentSessionUser")).getId();
-				
+				// Create the product object
 				product = new Product(req.getParameter("name"), sku, category, price, owner );
-				String query = "INSERT INTO products (name, sku, category, price, owner) VALUES (" + "'" + 
-						req.getParameter("name") + "', " + sku + ", " + category + ", " +
-						price + ", " + owner + ")";
-				ProductDAO.alter(query);
+				
+				// Write the query string, with "?" to help avoid potential SQL injections
+				String query = "INSERT INTO products (name, sku, category, price, owner) " +
+						"VALUES (?, ?, ?, ?, ?)";
+				ProductDAO.alter(query, req.getParameter("name"), sku, category, price, owner, -1);
 				req.setAttribute("product", product);
 				req.getRequestDispatcher("productsOwnerConfirm.jsp").forward(req, res);
 			} else if (req.getParameter("update") != null) {
-				String query = "UPDATE products SET name = '" + req.getParameter("name") +
-						"', sku = " + sku + ", category = '" + category + "', price = " +
-						price +
-						"WHERE id = " + req.getParameter("id");
-				ProductDAO.alter(query);
+				// Second Case: Updating an existing Product
+				String query = "UPDATE products SET name = ?, sku = ?, category = ?, " +
+						"price = ? WHERE id = ?";
+				int temp = Integer.parseInt(req.getParameter("id"));
+
+				ProductDAO.alter(query,req.getParameter("name"), sku, category, price, (long)-1, temp);
 				res.sendRedirect("products");
 			} else if (req.getParameter("delete") != null) {
-				// do more things
+				// Third Case: Deleting an existing Product
+				int temp = Integer.parseInt(req.getParameter("id"));
+				String query = "DELETE FROM products WHERE id = ?";
+				ProductDAO.alter(query, null, -1, -1, -1, -1, temp);
+				res.sendRedirect("products");
 			}
-			//res.sendRedirect("productsOwnerConfirm.jsp");
 			
 		} catch (SQLException | NumberFormatException e) {
+			
+			// If anything went wrong, redirect to error page with an error
 			e.printStackTrace();
 			error = "Failure to insert new product";
 			req.setAttribute("error", error);
-			req.getRequestDispatcher("productsOwnerError.jsp").forward(req, res);
+			req.getRequestDispatcher("productsOwnerConfirm.jsp").forward(req, res);
 		}
 	}
 }

@@ -72,24 +72,5 @@
  		<servlet-name>buyCart</servlet-name>
  		<url-pattern>/buyCart</url-pattern>
  	</servlet-mapping>
- 	
-	<servlet>
-		<servlet-name>multiplier</servlet-name>
-		<jsp-file>/multiplyJSP.jsp</jsp-file>
-	</servlet>
-	<servlet-mapping>
-		<servlet-name>multiplier</servlet-name>
-		<url-pattern>/multiply</url-pattern>
-	</servlet-mapping>
-	
-	<servlet>
-		<servlet-name>student</servlet-name>
-		<jsp-file>/students.jsp</jsp-file>
-	</servlet>
-	
-	<servlet-mapping>
-		<servlet-name>student</servlet-name>
-		<url-pattern>/students</url-pattern>
-	</servlet-mapping>
 
 </web-app>

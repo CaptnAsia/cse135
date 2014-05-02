@@ -14,11 +14,11 @@ import javax.servlet.http.HttpSession;
 
 public class CategoryServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
-		//System.out.println("doGet()");
 		List<Category> categories = null;
 		Hashtable<Long, Boolean> canDelete = null;
 		HttpSession session = req.getSession(true);
 		User user = (User)session.getAttribute("currentSessionUser");
+		
 		// Checks if there is a user present, as well as if the user is an owner
 		if (user == null || !user.isOwner()) {
 			// If not then let the .jsp file know that the user doesn't have permission to view this page
@@ -41,11 +41,13 @@ public class CategoryServlet extends HttpServlet {
 	
 	public void doPost (HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
 		String error = "";
-		//Category category;
-		System.out.println("Posting");
 		// See if the category exists in the database
 		try {
 			String query;
+			int i = 0;
+			if ((query = (String)req.getParameter("id")) != null) {
+				i = Integer.parseInt(query);
+			}
 			if (req.getParameter("name") == "") {
 				throw new SQLException("No name entered");
 			}
@@ -54,20 +56,18 @@ public class CategoryServlet extends HttpServlet {
 			}
 			if (req.getParameter("newCat") != null) {
 				// First case handles if a new Category tries to be inserted into the database
-				query = "INSERT INTO categories (name, description) VALUES (" + "'" + 
-						req.getParameter("name") + "', '" + req.getParameter("description") + "')";
-				CategoryDAO.alter(query);
+				query = "INSERT INTO categories (name, description) VALUES (?, ?)";
+				CategoryDAO.alter(query, req.getParameter("name"), req.getParameter("description"),-1);
 				res.sendRedirect("categories");
 			} else if (req.getParameter("update") != null) {
 				// Second case handles if the user tries to update a category
-				query = "UPDATE categories SET name = '" + req.getParameter("name") + 
-						"', description = '" + req.getParameter("description") + 
-						"' WHERE id = " + req.getParameter("id");
-				CategoryDAO.alter(query);
+				query = "UPDATE categories SET name = ?, description = ? WHERE id = ?";
+				CategoryDAO.alter(query, req.getParameter("name"), req.getParameter("description"), i);
 				res.sendRedirect("categories");
 			} else if (req.getParameter("delete") != null) {
-				query = "DELETE FROM categories WHERE id = " + req.getParameter("id");
-				CategoryDAO.alter(query);
+				// Third case handles if the user tries to delete a category
+				query = "DELETE FROM categories WHERE id = ?";
+				CategoryDAO.alter(query, null, null, i);
 				res.sendRedirect("categories");
 			}
 		} catch (SQLException | NumberFormatException e) {

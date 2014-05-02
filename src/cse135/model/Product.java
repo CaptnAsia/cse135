@@ -25,6 +25,19 @@ public class Product {
 		this.setPrice(price);
 		this.setOwner(owner);
 	}
+	
+	@Override
+	public int hashCode(){  
+		  return (int)sku;  
+	} 
+	
+	@Override 
+	public boolean equals(Object o) {
+		if((o instanceof Product) && ((Product)o).getName().equals(name)) {
+			return true;
+		}
+		return false;
+	}
 
 	public String getName() {
 		return name;

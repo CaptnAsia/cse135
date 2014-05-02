@@ -15,12 +15,17 @@
 <body>
 <%@ include file="WEB-INF/header.jsp" %>
 <div class="wrapper">
+	<div class="title2">Shopping Cart</div>
 	<%@ include file="WEB-INF/cart.jsp" %>
 	
 	<div class="title2">New Order</div>
 	<form action="order" method="POST">
 		<input type="hidden" name="name" value="<%=p.getName() %>"/>
 		<input type="hidden" name="price" value="<%=df.format(p.getPrice())%>"/>
+		<input type="hidden" name="sku" value="<%=p.getSku() %>"/>
+		<input type="hidden" name="owner" value="<%=p.getOwner() %>"/>
+		<input type="hidden" name="category" value="<%=p.getCategory() %>"/>
+		<input type="hidden" name="id" value="<%=p.getId() %>"/>
 		<table>
 			<th>Name</th>
 			<th>Price</th>

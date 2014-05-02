@@ -13,7 +13,6 @@ public class CategoryDAO {
 		List<Category> cats = new ArrayList<Category>();
 
          // Open a connection to the database using DriverManager
-
 		try {
 			try {Class.forName("org.postgresql.Driver");} catch (ClassNotFoundException ignore) {}
 			currentCon = DriverManager.getConnection(
@@ -37,16 +36,26 @@ public class CategoryDAO {
 		return cats;
 	}
 	
-	public static int alter(String query) throws SQLException {
+	public static int alter(String query, String name, String descr, int id) throws SQLException {
 		PreparedStatement s = null;
 		int rowCount;
+		int parameterIndex = 1;
 		try {
 			// Connect to database and try to insert newUser into the database
 			try { Class.forName("org.postgresql.Driver");} catch (ClassNotFoundException e) {}
 			currentCon = DriverManager.getConnection(dbName);
-			/*String query = "INSERT INTO categories (name, description) VALUES (" + "'" + 
-					newCategory.getName() + "', '" + newCategory.getDescription() + "')";*/
 			s = currentCon.prepareStatement(query);
+			if (name != null ) {
+				s.setString(parameterIndex, name);
+				parameterIndex++;
+			}
+			if (descr != null ) {
+				s.setString(parameterIndex, descr);
+				parameterIndex++;
+			}
+			if (id != -1) {
+				s.setInt(parameterIndex, id);
+			}
 			// Execute the query to update the database
 			rowCount = s.executeUpdate();
 		} finally {
@@ -59,6 +68,7 @@ public class CategoryDAO {
 		return rowCount;
 	}
 	
+	// Much DRY, wow, very space saving
 	public static long find(String name) throws SQLException {
         long catID = -1;
         for(Category c : list())

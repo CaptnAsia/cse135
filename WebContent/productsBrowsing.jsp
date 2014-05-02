@@ -25,7 +25,7 @@
     	<div><input name="search"/></div>
     	<div><input type="Submit" value="Go"/></div>
     	<% } else { %>
-    	<div>Please <a href="login">login</a> before you can search.</div>
+    	<div>Please <a href="login">log in</a> first.</div>
     	<%} %>
     </form>
     <div style="height:10px;"></div>
@@ -51,5 +51,7 @@
         </tr>
         <% } } %>
     </table>
+    </div>
+    </div>
 </body>
 </html>

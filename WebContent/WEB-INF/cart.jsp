@@ -1,22 +1,19 @@
-<% ArrayList<Order> cart = (ArrayList<Order>)session.getAttribute("cart"); 
-   DecimalFormat df = new DecimalFormat("#.00");
+<% DecimalFormat df = new DecimalFormat("#.00");
    double total = 0;%>
-<div class="title2">Shopping Cart</div>
 <div style="height:10px;"></div>
-	<div><% if (cart != null) { %><table>
+	<div><% if (cart != null) { %>
+		<table>
 			<th>Name</th>
 			<th>Price</th>
 			<th>Amt</th>
-			<% for (Order o: cart) { %>
+			<% for (Map.Entry<Product, Integer> cartList : cart.entrySet()) { %>
 			<tr>
-			<td class="name"><%=o.getName() %></td>
-			<td class="price">$<%=df.format(o.getPrice()) %></td>
-			<td class="quantity"><%=o.getAmount() %></td>
-			</tr><% total += o.getPrice()*o.getAmount();} %>
+				<% System.out.println(cartList.getKey().getName()); %>
+				<td class="name"><%=cartList.getKey().getName() %></td>
+				<td class="price">$<%=df.format(cartList.getKey().getPrice()) %></td>
+				<td class="quantity"><%=cartList.getValue() %></td>
+			</tr><% total += cartList.getKey().getPrice()*cartList.getValue();} %>
 			<tr>
-			
-			
-			
 		</table><table class="last"><tr>
 		<div style="height:5px;"></div>
 		<td class="name last" style="text-align: right;">Total:</td>

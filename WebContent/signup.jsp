@@ -8,7 +8,7 @@
 <title>Signup</title>
 </head>
 <body>
-<div class="header"><%@ include file="WEB-INF/header.jsp" %></div>
+<%@ include file="WEB-INF/header.jsp" %>
 <div class="wrapper">
 <div class="title1">Signup</div>
 	<form action="signup" method="POST">

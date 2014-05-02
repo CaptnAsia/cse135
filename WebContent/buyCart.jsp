@@ -14,11 +14,12 @@
 <body>
 <%@ include file="WEB-INF/header.jsp" %>
 <div class="wrapper">
+	<div class="title2">Shopping Cart</div>
 	<%@ include file="WEB-INF/cart.jsp" %>
 	
 	<% if ( session.getAttribute("cart") != null ) { %> 
 	<form action="buyCart" method="POST">
-		<div>Enter your credit card number nigga:</div>
+		<div>Enter your credit card number here:</div>
     	<div><input name="cardNumber"/></div>
     	<div style="height:5px;"></div>
     	<div><input type="Submit" name="cardNum" value="Purchase"/></div>

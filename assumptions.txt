@@ -1,6 +1,10 @@
+Assume that the homepage is the productBrowser page and products page for users who are logged in and are owners.
 Assume that after signup, the application also logs in with the signup information.
 Assume that only product owners can edit/delete their own products, no one elses.
 Assume that customers cannot access the Products page, only the products browsing page.
-Assume that owners cannot order anything, and therefore only have access to products page, not products browsing page.
+Assume that owners cannot order anything, and therefore only have access to products page, not products browsing page, or the shopping cart.
 Assume that owners cannot update or delete any product that they did not create themselves.
 Assume that clicking the sidebar on the products and productsbrowsing pages does not save the current search terms, if any, but searching while a category is selected will save the category filter.
+Assume that no product can cost more than $99999.99.
+Assume that the Product's Browsing page does not show categories when listing all the products, because they're all listed on the sidebar anyway.
+Assume that a shopping cart persists only within a session.

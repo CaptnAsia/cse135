@@ -22,42 +22,33 @@ public class SignupServlet extends HttpServlet {
 	public void doPost (HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
 		String output = "You have successfully signed up";
 		User user;
-		// PrintWriter out = res.getWriter();
-			// See if the user exists in the database
-			try { 
-				int a = Integer.parseInt(req.getParameter("age"));
-				boolean own = true;
-				
-				// Create a new user object to put into the database
-				//System.out.println("user is: " + req.getParameter("owner"));
-				if (req.getParameter("owner").contentEquals("customer")) {
-					//System.out.println("user is customer");
-					own = false;
-				}
-				
-				// Checks if name was blank
-				if (req.getParameter("name") == "" || a < 0) {
-					throw new SQLException();
-				}
-				user = new User(req.getParameter("name"),a,req.getParameter("state"),own , 0);
-				
-				user.setId(UserDAO.insert(user));
-				HttpSession session = req.getSession(true);
-				session.setAttribute("currentSessionUser",user); 
-				res.sendRedirect("afterSignup.jsp");
-				
-			} catch (SQLException  | NumberFormatException e) {
-				e.printStackTrace();
-				output = "Your signup failed";
-				req.setAttribute("message", output);
-				req.getRequestDispatcher("afterSignup.jsp").forward(req, res);
-				//output = "Your signup failed";
-				//req.setAttribute("message", output);
-				//req.getRequestDispatcher("afterSignup.jsp").forward(req, res);
+		// See if the user exists in the database
+		try { 
+			int a = Integer.parseInt(req.getParameter("age"));
+			boolean own = true;
+			
+			// Create a new user object to put into the database
+			if (req.getParameter("owner").contentEquals("customer")) {
+				own = false;
 			}
-		
-		//String error = "The provided name " + name + " is not known.";
-	    //out.println (output);
+			
+			// Checks if name was blank
+			if (req.getParameter("name") == "" || a < 0) {
+				throw new SQLException();
+			}
+			user = new User(req.getParameter("name"),a,req.getParameter("state"),own , 0);
+			
+			user.setId(UserDAO.insert(user));
+			HttpSession session = req.getSession(true);
+			session.setAttribute("currentSessionUser",user); 
+			res.sendRedirect("afterSignup.jsp");
+			
+		} catch (SQLException  | NumberFormatException e) {
+			e.printStackTrace();
+			output = "Your signup failed";
+			req.setAttribute("message", output);
+			req.getRequestDispatcher("afterSignup.jsp").forward(req, res);
+		}
 	}
 
 }

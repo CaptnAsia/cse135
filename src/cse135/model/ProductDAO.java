@@ -10,6 +10,8 @@ public class ProductDAO {
 	static Connection currentCon = null;
 	static ResultSet rs = null;
 	
+	/* Find's a product in the products database
+	 */
 	public static Product find(String key, int value) throws SQLException {
 		PreparedStatement s = null;
 		Product p = new Product();
@@ -18,8 +20,9 @@ public class ProductDAO {
 		try {
 			try {Class.forName("org.postgresql.Driver");} catch (ClassNotFoundException ignore) {}
 			currentCon = DriverManager.getConnection(dbName);
-			String query = "SELECT * FROM products WHERE " + key + " = " + value;
+			String query = "SELECT * FROM products WHERE " + key + " = ?";// + key + " = " + value;
 			s = currentCon.prepareStatement(query);
+			s.setInt(1, value);
 			rs = s.executeQuery();
 			
 			if (rs.next()) {
@@ -38,6 +41,9 @@ public class ProductDAO {
 		return p;
 	}
 	
+	/* This function searches for all the categories that are linked to products and
+	 * puts the id's in a hashtable to check for later
+	 */
 	public static Hashtable<Long,Boolean> categories() throws SQLException {
 		PreparedStatement s = null;
 		Hashtable<Long,Boolean> table = new Hashtable<Long,Boolean>();
@@ -64,7 +70,6 @@ public class ProductDAO {
 		List<Product> products = new ArrayList<Product>();
 
          // Open a connection to the database using DriverManager
-
 		try {
 			try {Class.forName("org.postgresql.Driver");} catch (ClassNotFoundException ignore) {}
 			currentCon = DriverManager.getConnection(dbName);
@@ -94,18 +99,35 @@ public class ProductDAO {
 		return products;
 	}
 	
-	/*public static int insert(Product newProduct) throws SQLException {
+	public static int alter(String query, String name, int sku, int cat, double price, long owner, int id) throws SQLException {
 		PreparedStatement s = null;
+		int parameterIndex = 1;
+		int newId;
 		try {
 			// Connect to database and try to insert newUser into the database
 			try { Class.forName("org.postgresql.Driver");} catch (ClassNotFoundException e) {}
 			currentCon = DriverManager.getConnection(dbName);
-			String query = "INSERT INTO products (name, sku, category, price, owner) VALUES (" + "'" + 
-					newProduct.getName() + "', " + newProduct.getSku() + ", " + newProduct.getCategory() + ", " +
-					newProduct.getPrice() + ", " + newProduct.getOwner() + ")";
 			s = currentCon.prepareStatement(query);
+			if (name != null) {
+				s.setString(parameterIndex, name);
+				parameterIndex++;
+			} if (sku >= 0) {
+				s.setInt(parameterIndex, sku);
+				parameterIndex++;
+			} if (cat >= 0) {
+				s.setInt(parameterIndex, cat);
+				parameterIndex++;
+			} if (price >= 0) {
+				s.setDouble(parameterIndex, price);
+				parameterIndex++;
+			} if (owner >= 0) {
+				s.setLong(parameterIndex, owner);
+				parameterIndex++;
+			} if (id >= 0)
+				s.setInt(parameterIndex, id);
+			
 			// Execute the query to update the database
-			s.executeUpdate();
+			newId = s.executeUpdate();
 		} finally {
 			// Close connections
 			if (rs != null) try {rs.close();} catch (SQLException ignore) {}
@@ -113,29 +135,6 @@ public class ProductDAO {
 			if (currentCon != null) try {currentCon.close();} catch (SQLException ignore) {}
 		}
 		// Returns the user that was put into the database
-		return (int)newProduct.getSku();
-	}*/
-	
-	public static int alter(String query) throws SQLException {
-		PreparedStatement s = null;
-		int id;
-		try {
-			// Connect to database and try to insert newUser into the database
-			try { Class.forName("org.postgresql.Driver");} catch (ClassNotFoundException e) {}
-			currentCon = DriverManager.getConnection(dbName);
-			/*String query = "INSERT INTO products (name, sku, category, price, owner) VALUES (" + "'" + 
-					newProduct.getName() + "', " + newProduct.getSku() + ", " + newProduct.getCategory() + ", " +
-					newProduct.getPrice() + ", " + newProduct.getOwner() + ")";*/
-			s = currentCon.prepareStatement(query);
-			// Execute the query to update the database
-			id = s.executeUpdate();
-		} finally {
-			// Close connections
-			if (rs != null) try {rs.close();} catch (SQLException ignore) {}
-			if (s != null) try {s.close();} catch (SQLException ignore) {}
-			if (currentCon != null) try {currentCon.close();} catch (SQLException ignore) {}
-		}
-		// Returns the user that was put into the database
-		return id;
+		return newId;
 	}
 }
