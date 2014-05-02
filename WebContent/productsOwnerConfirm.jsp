@@ -3,21 +3,23 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
+<%@ page import="java.text.DecimalFormat" %>
 <link rel="stylesheet" type="text/css" href="stylesheets/main.css">
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>Signup</title>
+<title>Successfully Inserted a New Product</title>
 </head>
 <body>
 <div class="header"><%@ include file="WEB-INF/header.jsp" %></div>
 <div class="wrapper">
 	<div class="title2">Confirmation Page</div>
 	<div style="height:10px;"></div>
-	<% Product p = (Product)request.getAttribute("product"); %>
+	<% Product p = (Product)request.getAttribute("product");
+	   DecimalFormat df = new DecimalFormat("#.00");%>
 	<div>Successfully added new product!</div>
 	<div style="height:10px;"></div>
 	<div>Name:  <%= p.getName() %></div>
 	<div>SKU:   <%= p.getSku() %></div>
-	<div>Price: $<%= p.getPrice() %></div>
+	<div>Price: $<%= df.format(p.getPrice()) %></div>
 </div>
 </body>
 </html>

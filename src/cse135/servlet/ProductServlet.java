@@ -80,12 +80,26 @@ public class ProductServlet extends HttpServlet{
 			int sku = Integer.parseInt(req.getParameter("sku"));
 			double price = Double.parseDouble(req.getParameter("price"));
 			int category = Integer.parseInt(req.getParameter("category"));
-			long owner = ((User)session.getAttribute("currentSessionUser")).getId();
-			
-			product = new Product(req.getParameter("name"), sku, category, price, owner );
-			ProductDAO.insert(product);
-			req.setAttribute("product", product);
-			req.getRequestDispatcher("productsOwnerConfirm.jsp").forward(req, res);
+			if (req.getParameter("newProd") != null) {
+				long owner = ((User)session.getAttribute("currentSessionUser")).getId();
+				
+				product = new Product(req.getParameter("name"), sku, category, price, owner );
+				String query = "INSERT INTO products (name, sku, category, price, owner) VALUES (" + "'" + 
+						req.getParameter("name") + "', " + sku + ", " + category + ", " +
+						price + ", " + owner + ")";
+				ProductDAO.alter(query);
+				req.setAttribute("product", product);
+				req.getRequestDispatcher("productsOwnerConfirm.jsp").forward(req, res);
+			} else if (req.getParameter("update") != null) {
+				String query = "UPDATE products SET name = '" + req.getParameter("name") +
+						"', sku = " + sku + ", category = '" + category + "', price = " +
+						price +
+						"WHERE id = " + req.getParameter("id");
+				ProductDAO.alter(query);
+				res.sendRedirect("products");
+			} else if (req.getParameter("delete") != null) {
+				// do more things
+			}
 			//res.sendRedirect("productsOwnerConfirm.jsp");
 			
 		} catch (SQLException | NumberFormatException e) {

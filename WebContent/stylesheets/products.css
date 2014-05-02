@@ -1,5 +1,8 @@
-.sidebar {
-    float:left;
+#sidebar {
+	position:absolute;
+	left: 0;
+	top: 0;
+	bottom: 50px;
     width:200px;
     margin: 0px 10px 0px 0px;
     padding: 0px 0px 10px 10px;
@@ -8,6 +11,7 @@
     border-color: #CCC;
     
 }
-.products {
-	float: left;
+#products {
+	margin-left:221px;
+	margin-bottom: 50px;
 }

@@ -10,6 +10,34 @@ public class ProductDAO {
 	static Connection currentCon = null;
 	static ResultSet rs = null;
 	
+	public static Product find(String key, int value) throws SQLException {
+		PreparedStatement s = null;
+		Product p = new Product();
+
+         // Open a connection to the database using DriverManager
+		try {
+			try {Class.forName("org.postgresql.Driver");} catch (ClassNotFoundException ignore) {}
+			currentCon = DriverManager.getConnection(dbName);
+			String query = "SELECT * FROM products WHERE " + key + " = " + value;
+			s = currentCon.prepareStatement(query);
+			rs = s.executeQuery();
+			
+			if (rs.next()) {
+				p.setId(rs.getLong("id"));
+				p.setName(rs.getString("name"));
+				p.setSku(rs.getLong("sku"));
+				p.setCategory(rs.getInt("category"));
+				p.setPrice(rs.getDouble("price"));
+				p.setOwner(rs.getLong("owner"));
+			}
+		} finally {
+			if (rs != null) try {rs.close();} catch (SQLException ignore) {}
+			if (s != null) try {s.close();} catch (SQLException ignore) {}
+			if (currentCon != null) try {currentCon.close();} catch (SQLException ignore) {}
+		}
+		return p;
+	}
+	
 	public static Hashtable<Long,Boolean> categories() throws SQLException {
 		PreparedStatement s = null;
 		Hashtable<Long,Boolean> table = new Hashtable<Long,Boolean>();
@@ -50,6 +78,7 @@ public class ProductDAO {
 			
 			while (rs.next()) {
 				Product product = new Product();
+				product.setId(rs.getLong("id"));
 				product.setName(rs.getString("name"));
 				product.setSku(rs.getLong("sku"));
 				product.setCategory(rs.getInt("category"));
@@ -65,7 +94,7 @@ public class ProductDAO {
 		return products;
 	}
 	
-	public static int insert(Product newProduct) throws SQLException {
+	/*public static int insert(Product newProduct) throws SQLException {
 		PreparedStatement s = null;
 		try {
 			// Connect to database and try to insert newUser into the database
@@ -85,5 +114,28 @@ public class ProductDAO {
 		}
 		// Returns the user that was put into the database
 		return (int)newProduct.getSku();
+	}*/
+	
+	public static int alter(String query) throws SQLException {
+		PreparedStatement s = null;
+		int id;
+		try {
+			// Connect to database and try to insert newUser into the database
+			try { Class.forName("org.postgresql.Driver");} catch (ClassNotFoundException e) {}
+			currentCon = DriverManager.getConnection(dbName);
+			/*String query = "INSERT INTO products (name, sku, category, price, owner) VALUES (" + "'" + 
+					newProduct.getName() + "', " + newProduct.getSku() + ", " + newProduct.getCategory() + ", " +
+					newProduct.getPrice() + ", " + newProduct.getOwner() + ")";*/
+			s = currentCon.prepareStatement(query);
+			// Execute the query to update the database
+			id = s.executeUpdate();
+		} finally {
+			// Close connections
+			if (rs != null) try {rs.close();} catch (SQLException ignore) {}
+			if (s != null) try {s.close();} catch (SQLException ignore) {}
+			if (currentCon != null) try {currentCon.close();} catch (SQLException ignore) {}
+		}
+		// Returns the user that was put into the database
+		return id;
 	}
 }

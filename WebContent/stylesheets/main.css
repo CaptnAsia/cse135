@@ -7,6 +7,17 @@
     position: relative;
 }
 
+table {
+	border-collapse: collapse;
+}
+.cartLink {
+	position: absolute;
+	text-align: right;
+	bottom: 0;
+	right: 0;
+	margin-right: 5px;
+	margin-bottom: 5px;
+}
 .header-content {
 	position: absolute;
 	margin-left: 5px;
@@ -16,6 +27,7 @@
 }
 
 .wrapper {
+	position: relative;
 	margin:0px auto;
 	width:960px;
 }

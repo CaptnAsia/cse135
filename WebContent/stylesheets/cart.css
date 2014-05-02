@@ -1,0 +1,35 @@
+table {
+	border: 1px solid black;
+	width: 100%;
+}
+td {
+	border: 1px solid black;
+}
+.name {
+	width: 80%;
+}
+
+.price {
+	width: 15%;
+}
+.last {
+	border: none;
+}
+.quantity {
+	margin: 0 auto;
+}
+
+.quantity input {
+	width: 42px;
+}
+
+#submit {
+	float: right;
+	margin-left: auto;
+	margin-right: 0;
+}
+
+th {
+	text-align:left;
+	background-color: #CCC;
+}

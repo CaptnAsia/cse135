@@ -49,7 +49,7 @@ public class UserDAO {
 			currentCon = DriverManager.getConnection(dbName);
 			String query = "INSERT INTO users (name, age, state, owner) VALUES ('"+ newUser.getName() + "', " +
 					newUser.getAge() + ", '" + newUser.getState() + "', " + newUser.isOwner() + ")";
-			s = currentCon.prepareStatement(query);
+			s = currentCon.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
 			// Execute the query to update the database
 			rowCount = s.executeUpdate();
 		} finally {

@@ -4,11 +4,12 @@
 <div class="header">
 <div class="header-content"><%
 if (current == null) {%>
-<a href="login">Login</a> or <a href="signup">Sign Up</a>
+<a href="login">Login</a> or <a href="signup">Sign Up</a> 
+ 
 <% } else { %>
 Hello <%=current.getName() %> | <%
 if (current.isOwner()) { %><a href="categories">Categories</a> | 
 <% } %><a href="products">Products</a>
- | 
-<%} %></div></div>
+<%} %></div><div class="cartLink"><a href="cartLink">Buy Shopping Cart</a></div></div>
+
 </div>

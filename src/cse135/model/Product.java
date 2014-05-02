@@ -1,6 +1,9 @@
 package cse135.model;
 
+
+
 public class Product {
+	private long id;
 	private String name;
 	private long sku;
 	private int category;
@@ -61,5 +64,13 @@ public class Product {
 
 	public void setOwner(long owner) {
 		this.owner = owner;
+	}
+
+	public long getId() {
+		return id;
+	}
+
+	public void setId(long id) {
+		this.id = id;
 	}
 }

@@ -38,11 +38,11 @@
         	<td><input name="name" value="<%=c.getName() %>"/></td>
         	<td><input name="description" value="<%=c.getDescription() %>"/></td>
         	<td><input type="Submit" name="update" value="Update"/></td>
-        	<td><% if (table.get(c.getId()) == null) {%>
+        	<td>
         	<form action="categories" method="POST">
         		<input type="hidden" value="<%=c.getId() %>" name="id"/>
-        		<input type="Submit" name="delete" value="Delete"/>
-        	</form><%} %></td>
+        		<input type="Submit" name="delete" <% if (table.get(c.getId()) != null) {%> disabled <% } %> value="Delete"/>
+        	</form></td>
         	</form>
         </tr>
         <%i++;} %>

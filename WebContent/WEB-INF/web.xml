@@ -5,14 +5,13 @@
   "http://java.sun.com/j2ee/dtds/web-app_2_2.dtd">
 
 <web-app>
-
 	<!--  General Web Application Description -->
 	<display-name>eCommerce Application</display-name>
 
 	
  	 <welcome-file-list>
  	     <welcome-file>
- 	        login
+ 	        products
  	     </welcome-file>
  	</welcome-file-list>
  	
@@ -56,7 +55,14 @@
  		<url-pattern>/products</url-pattern>
  	</servlet-mapping>
  	
-
+	<servlet>
+ 		<servlet-name>buy</servlet-name>
+ 		<servlet-class>cse135.servlet.OrderServlet</servlet-class>
+ 	</servlet>
+ 	<servlet-mapping>
+ 		<servlet-name>buy</servlet-name>
+ 		<url-pattern>/order</url-pattern>
+ 	</servlet-mapping>
  	
 	<servlet>
 		<servlet-name>multiplier</servlet-name>

@@ -1,3 +1,4 @@
 Assume that only product owners can edit/delete their own products, no one elses.
 Assume that customers cannot access the Products page, only the products browsing page.
 Assume that owners cannot order anything, and therefore only have access to products page, not products browsing page.
+Assume that owners cannot update or delete any product that they did not create themselves.

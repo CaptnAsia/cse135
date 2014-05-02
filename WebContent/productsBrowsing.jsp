@@ -4,6 +4,7 @@
 <html>
 <head>
 <%@ page import="java.util.List" %>
+<%@ page import="java.text.DecimalFormat" %>
 <link rel="stylesheet" type="text/css" href="stylesheets/main.css">
 <link rel="stylesheet" type="text/css" href="stylesheets/products.css">
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
@@ -12,8 +13,8 @@
 <body>
 <%@ include file="WEB-INF/header.jsp" %>
 <div class="wrapper">
-	<div class="sidebar"><%@ include file="WEB-INF/categoriesSidebar.jsp" %></div>
-	<div class="products">
+	<div id="sidebar"><%@ include file="WEB-INF/categoriesSidebar.jsp" %></div>
+	<div id="products">
 	<div class="title2">Products</div>
     <div style="height:10px;"></div>
     <form action="products" method="GET">
@@ -33,8 +34,10 @@
         	<th>SKU</th>
         	<th>Name</th>
         	<th>Price</th>
+        	<th>Buy</th>
         </tr>
         <%
+        DecimalFormat df = new DecimalFormat("#.00");
         String filterName = (String)request.getAttribute("filter");
         System.out.println("filterName = '" + filterName + "'");
         List<Product> products = (List<Product>)request.getAttribute("productList");
@@ -42,8 +45,9 @@
         	if (filterName == "" || p.getName().toLowerCase().contains(filterName.toLowerCase()) ) {%>
         <tr>
         	<td><%= p.getSku() %></td>
-        	<td><a href="#"><%= p.getName() %></a></td>
-        	<td>$<%= p.getPrice() %></td>
+        	<td><%= p.getName() %></td>
+        	<td>$<%= df.format(p.getPrice()) %></td>
+        	<td><a href="order?product=<%=p.getSku()%>">Buy</a></form>
         </tr>
         <% } } %>
     </table>
