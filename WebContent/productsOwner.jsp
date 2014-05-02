@@ -37,7 +37,6 @@
         </tr>
         <%
         String filterName = (String)request.getAttribute("filter");
-        System.out.println("filterName = '" + filterName + "'");
         List<Product> products = (List<Product>)request.getAttribute("productList");
         DecimalFormat df = new DecimalFormat("#.00");
         for(Product p : products) {

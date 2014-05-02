@@ -11,7 +11,7 @@
 <title><% if (request.getAttribute("result") == null) { %>Checkout Successful<% } else { %>Error<% } %></title>
 </head>
 <body>
-<div class="header"><%@ include file="WEB-INF/header.jsp" %></div>
+<%@ include file="WEB-INF/header.jsp" %>
 <div class="wrapper" style="padding-top: 10px;">
 	<% if (request.getAttribute("result") != null) {%>
 	<%= request.getAttribute("result")%>

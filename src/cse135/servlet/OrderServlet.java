@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -22,6 +23,18 @@ import cse135.model.Order;
 
 public class OrderServlet extends HttpServlet{
 	protected void doGet (HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
+		HttpSession session = req.getSession(true);
+		
+		HashMap<Product,Integer> map = (HashMap<Product,Integer>)session.getAttribute("cart");
+		if ((map) != null) {
+			try {
+				for (Map.Entry<Product, Integer> entry : map.entrySet()) {
+					map.put(ProductDAO.find("id", (int)(entry.getKey().getId())), map.remove(entry.getKey()));
+					
+				}
+			} catch (SQLException e) {}
+			session.setAttribute("cart", map);
+		}
 			if (req.getParameter("product") != null ) {
 			int sku = Integer.parseInt(req.getParameter("product"));
 			try {
@@ -49,9 +62,10 @@ public class OrderServlet extends HttpServlet{
 				throw new NumberFormatException();
 			}
 			double price = Double.parseDouble(req.getParameter("price"));
-			
+			long id = Long.parseLong(req.getParameter("id"));
 			// Don't care about anything else, just need name and price;
 			Product p = new Product(req.getParameter("name"), 0, 0, price, 0);
+			p.setId(id);
 			if (cart == null) { // If there's nothing in the cart, make a new cart
 				cart = new HashMap<Product,Integer>();
 			} 

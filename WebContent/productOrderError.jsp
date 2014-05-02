@@ -11,7 +11,7 @@
 <title>Order Products</title>
 </head>
 <body>
-<%@ include file="header.jsp" %>
+<%@ include file="/WEB-INF/header.jsp" %>
 <div class="wrapper">
 <div style="margin-top: 10px">An error occurred while trying to order your items.</div>
 </div>

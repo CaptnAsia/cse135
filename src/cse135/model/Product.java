@@ -33,7 +33,7 @@ public class Product {
 	
 	@Override 
 	public boolean equals(Object o) {
-		if((o instanceof Product) && ((Product)o).getName().equals(name)) {
+		if((o instanceof Product) && ((Product)o).getId() == id) {
 			return true;
 		}
 		return false;

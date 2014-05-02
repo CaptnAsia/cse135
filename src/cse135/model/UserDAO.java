@@ -13,16 +13,14 @@ public class UserDAO {
 		User user = null;
 		
 		try {
-			System.out.println("trying to connect to driver thing");
 			try { Class.forName("org.postgresql.Driver");} catch (ClassNotFoundException e) {}
 			
 			// Connect to the database and execute a query to find a user with the same name as name
 			currentCon = DriverManager.getConnection(dbName);
-			String query = "SELECT * FROM Users WHERE name = '"+ name + "'";
+			String query = "SELECT * FROM Users WHERE name = ?";
 			s = currentCon.prepareStatement(query);
-			System.out.println(query);
+			s.setString(1, name);
 			rs = s.executeQuery();
-			System.out.println("found");
 			
 			// Checks if anything is returned
 			if (rs.next()) {

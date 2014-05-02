@@ -8,7 +8,6 @@
 			<th>Amt</th>
 			<% for (Map.Entry<Product, Integer> cartList : cart.entrySet()) { %>
 			<tr>
-				<% System.out.println(cartList.getKey().getName()); %>
 				<td class="name"><%=cartList.getKey().getName() %></td>
 				<td class="price">$<%=df.format(cartList.getKey().getPrice()) %></td>
 				<td class="quantity"><%=cartList.getValue() %></td>

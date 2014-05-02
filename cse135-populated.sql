@@ -84,7 +84,7 @@ CREATE TABLE products (
     id integer NOT NULL,
     name text NOT NULL,
     sku integer NOT NULL,
-    price numeric(5,2) NOT NULL,
+    price numeric(7,2) NOT NULL,
     category integer,
     owner integer NOT NULL,
     CONSTRAINT products_price_check CHECK ((price >= (0)::numeric))
@@ -170,6 +170,87 @@ ALTER TABLE ONLY products ALTER COLUMN id SET DEFAULT nextval('products_id_seq':
 --
 
 ALTER TABLE ONLY users ALTER COLUMN id SET DEFAULT nextval('users_id_seq'::regclass);
+
+
+--
+-- Data for Name: categories; Type: TABLE DATA; Schema: public; Owner: mikel
+--
+
+COPY categories (id, name, description) FROM stdin;
+10	Electronics	buy it use it break it fix it smash it....;
+2	Test	This is a test category.
+11	Wood	All things made of wood
+23	Toys	These are toys.
+22	new	this is new
+16	Food	yum
+25	Turnt	Down
+\.
+
+
+--
+-- Name: categories_id_seq; Type: SEQUENCE SET; Schema: public; Owner: mikel
+--
+
+SELECT pg_catalog.setval('categories_id_seq', 30, true);
+
+
+--
+-- Data for Name: products; Type: TABLE DATA; Schema: public; Owner: mikel
+--
+
+COPY products (id, name, sku, price, category, owner) FROM stdin;
+2	ps3	2	599.99	10	1
+8	serato	5	500.00	10	1
+9	master sword	999	999.00	23	1
+10	vallartas	7	10.00	16	1
+11	lego	1891	149.99	23	1
+12	desk	84	39.99	11	1
+13	baseball bat	82	30.00	11	1
+14	macbook	43	999.99	10	1
+15	Up	11	0.00	25	1
+17	double decker couch	864	777.00	22	1
+18	microwave	35	100.00	10	1
+21	SAT	2400	1.00	2	1
+24	Cheese	333	3.00	16	1
+25	aaa	123456	5.00	10	1
+26	another	54321	9.00	10	1
+4	dog	67	1.00	16	20
+29	refrigerator	24	400.00	10	20
+30	neon trees	101	0.01	22	1
+1	ps4	1	399.99	10	1
+\.
+
+
+--
+-- Name: products_id_seq; Type: SEQUENCE SET; Schema: public; Owner: mikel
+--
+
+SELECT pg_catalog.setval('products_id_seq', 30, true);
+
+
+--
+-- Data for Name: users; Type: TABLE DATA; Schema: public; Owner: mikel
+--
+
+COPY users (id, name, age, state, owner) FROM stdin;
+1	Mike	21	CA	t
+2	Test	22	AL	t
+5	eric	21	CA	t
+19	Bryant	21	NE	t
+20	Eric	21	CA	t
+24	aaaaa	12	AL	f
+25	Customer	2	CA	f
+28	Yannis	55	CA	t
+29	Consumer	14	AR	f
+30	Mc'Davis	12	AL	f
+\.
+
+
+--
+-- Name: users_id_seq; Type: SEQUENCE SET; Schema: public; Owner: mikel
+--
+
+SELECT pg_catalog.setval('users_id_seq', 30, true);
 
 
 --

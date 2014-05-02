@@ -2,6 +2,7 @@ package cse135.servlet;
 import cse135.model.*;
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
 
@@ -63,6 +64,7 @@ public class ProductServlet extends HttpServlet{
 		int sku = 0;
 		double price = 0;
 		int category = 0;
+		long owner = 0;
 		
 		try {
 			// Checks if any attributes were blank
@@ -80,10 +82,10 @@ public class ProductServlet extends HttpServlet{
 				sku = Integer.parseInt(req.getParameter("sku"));
 				price = Double.parseDouble(req.getParameter("price"));
 				category = Integer.parseInt(req.getParameter("category"));
+				owner = ((User)session.getAttribute("currentSessionUser")).getId();
 			}
 			if (req.getParameter("newProd") != null) {
 				// First Case: Inserting a new Product
-				long owner = ((User)session.getAttribute("currentSessionUser")).getId();
 				// Create the product object
 				product = new Product(req.getParameter("name"), sku, category, price, owner );
 				
@@ -98,8 +100,12 @@ public class ProductServlet extends HttpServlet{
 				String query = "UPDATE products SET name = ?, sku = ?, category = ?, " +
 						"price = ? WHERE id = ?";
 				int temp = Integer.parseInt(req.getParameter("id"));
-
+				
+				product = new Product(req.getParameter("name"), sku, category, price, owner );
 				ProductDAO.alter(query,req.getParameter("name"), sku, category, price, (long)-1, temp);
+				/*HashMap<Product,Integer> map = (HashMap<Product,Integer>)session.getAttribute("cart");
+				
+				map.put(product, map.remove(ProductDAO.find("id", temp)));*/
 				res.sendRedirect("products");
 			} else if (req.getParameter("delete") != null) {
 				// Third Case: Deleting an existing Product

@@ -4,8 +4,10 @@ import cse135.model.*;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.Map;
 import java.util.zip.DataFormatException;
 
 import javax.servlet.ServletException;
@@ -17,6 +19,17 @@ import javax.servlet.http.HttpSession;
 
 public class BuyCartServlet extends HttpServlet{
 	protected void doGet (HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
+		HttpSession session = req.getSession(true);
+		HashMap<Product,Integer> map = (HashMap<Product,Integer>)session.getAttribute("cart");
+		if ((map) != null) {
+			try {
+				for (Map.Entry<Product, Integer> entry : map.entrySet()) {
+					map.put(ProductDAO.find("id", (int)(entry.getKey().getId())), map.remove(entry.getKey()));
+					
+				}
+			} catch (SQLException e) {}
+			session.setAttribute("cart", map);
+		}
 		req.getRequestDispatcher("buyCart.jsp").forward(req, res);
 	}
 	
@@ -31,20 +44,16 @@ public class BuyCartServlet extends HttpServlet{
 				card = card.replace(" ", "");
 				card = card.replace("-", "");
 				
-				/*System.out.println("cardNumber = " + cardNumber);
-				boolean pass = true;
-				String num = "" + cardNumber;*/
-				
+				// Simple card check if the length of the card is 16 digits
 				if ( card.length() != 16 ) {
 					req.setAttribute("result", error);
 					throw new NumberFormatException();
 				} else {
-					long cardNumber = Long.parseLong(card);
+					// Also checks if the string is actually a number
+					Long.parseLong(card);
 					req.setAttribute("Descartes", session.getAttribute("cart"));
 					session.setAttribute("cart", null);
-					//res.sendRedirect("buyConfirm.jsp");
 					req.getRequestDispatcher("buyConfirm.jsp").forward(req, res);
-					//System.out.println("Good card number");
 				}
 				
 			} catch (NumberFormatException e) {
