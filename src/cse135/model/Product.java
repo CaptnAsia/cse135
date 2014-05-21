@@ -5,30 +5,27 @@ package cse135.model;
 public class Product {
 	private long id;
 	private String name;
-	private long sku;
+	private String sku;
 	private int category;
 	private double price;
-	private long owner;
 	
 	public Product() {
 		this.name = "";
-		this.sku = 0;
+		this.sku = "";
 		this.category = 0;
 		this.price = 0;
-		this.owner = 0;
 	}
 	
-	public Product (String name, long sku, int category, double price, long owner) {
+	public Product (String name, String sku, int category, double price) {
 		this.setName(name);
 		this.setSku(sku);
 		this.setCategory(category);
 		this.setPrice(price);
-		this.setOwner(owner);
 	}
 	
 	@Override
 	public int hashCode(){  
-		  return (int)sku;  
+		  return Integer.parseInt(sku);  
 	} 
 	
 	@Override 
@@ -47,11 +44,11 @@ public class Product {
 		this.name = name;
 	}
 
-	public long getSku() {
+	public String getSku() {
 		return sku;
 	}
 
-	public void setSku(long sku) {
+	public void setSku(String sku) {
 		this.sku = sku;
 	}
 
@@ -71,13 +68,6 @@ public class Product {
 		this.price = price;
 	}
 
-	public long getOwner() {
-		return owner;
-	}
-
-	public void setOwner(long owner) {
-		this.owner = owner;
-	}
 
 	public long getId() {
 		return id;

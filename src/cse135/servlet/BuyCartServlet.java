@@ -21,13 +21,18 @@ public class BuyCartServlet extends HttpServlet{
 	protected void doGet (HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
 		HttpSession session = req.getSession(true);
 		HashMap<Product,Integer> map = (HashMap<Product,Integer>)session.getAttribute("cart");
+		
 		if ((map) != null) {
-			try {
+			/*try {
+				List<Product> prods = ProductDAO.list(-1);
 				for (Map.Entry<Product, Integer> entry : map.entrySet()) {
+					if (prods.contains(entry.getKey())) {
+							prods.
+					}
 					map.put(ProductDAO.find("id", (int)(entry.getKey().getId())), map.remove(entry.getKey()));
 					
 				}
-			} catch (SQLException e) {}
+			} catch (SQLException e) {}*/
 			session.setAttribute("cart", map);
 		}
 		req.getRequestDispatcher("buyCart.jsp").forward(req, res);
@@ -52,6 +57,11 @@ public class BuyCartServlet extends HttpServlet{
 					// Also checks if the string is actually a number
 					Long.parseLong(card);
 					req.setAttribute("Descartes", session.getAttribute("cart"));
+					HashMap<Product,Integer> map = (HashMap<Product,Integer>)session.getAttribute("cart");
+					for (Map.Entry<Product, Integer> cartList : map.entrySet()) {
+						User current = (User)session.getAttribute("currentSessionUser");
+						SaleDAO.add(current.getId(),cartList.getKey().getId(),cartList.getValue(),cartList.getKey().getPrice());
+					}
 					session.setAttribute("cart", null);
 					req.getRequestDispatcher("buyConfirm.jsp").forward(req, res);
 				}

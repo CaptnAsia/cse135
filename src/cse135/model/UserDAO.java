@@ -26,7 +26,11 @@ public class UserDAO {
 			if (rs.next()) {
 				// Then creates a new user90
 				System.out.println("not working");
-				user = new User(rs.getString("name"),rs.getInt("age"),rs.getString("state"),rs.getBoolean("owner"),rs.getLong("id"));
+				user = new User(rs.getString("name"),
+								rs.getInt("age"),
+								rs.getString("state"),
+								rs.getString("role"),
+								rs.getLong("id"));
 			}
 		} finally {
 			// Close all connections
@@ -45,12 +49,12 @@ public class UserDAO {
 			// Connect to database and try to insert newUser into the database
 			try { Class.forName("org.postgresql.Driver");} catch (ClassNotFoundException e) {}
 			currentCon = DriverManager.getConnection(dbName);
-			String query = "INSERT INTO users (name, age, state, owner) VALUES (?, ?, ?, ?)";
+			String query = "INSERT INTO users (name, age, state, role) VALUES (?, ?, ?, ?)";
 			s = currentCon.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
 			s.setString(1, newUser.getName());
 			s.setInt(2, newUser.getAge());
 			s.setString(3, newUser.getState());
-			s.setBoolean(4, newUser.isOwner());
+			s.setString(4, newUser.getRole());
 			// Execute the query to update the database
 			rowCount = s.executeUpdate();
 		} finally {

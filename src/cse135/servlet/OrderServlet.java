@@ -27,12 +27,12 @@ public class OrderServlet extends HttpServlet{
 		
 		HashMap<Product,Integer> map = (HashMap<Product,Integer>)session.getAttribute("cart");
 		if ((map) != null) {
-			try {
+			/*try {
 				for (Map.Entry<Product, Integer> entry : map.entrySet()) {
 					map.put(ProductDAO.find("id", (int)(entry.getKey().getId())), map.remove(entry.getKey()));
 					
 				}
-			} catch (SQLException e) {}
+			} catch (SQLException e) {}*/
 			session.setAttribute("cart", map);
 		}
 			if (req.getParameter("product") != null ) {
@@ -43,8 +43,9 @@ public class OrderServlet extends HttpServlet{
 				req.setAttribute("orderProd", p);
 				req.getRequestDispatcher("productOrder.jsp").forward(req, res);
 			} catch (SQLException e) {
-				// If an error occured, redirect
-				res.sendRedirect("orderError.jsp.");
+				// If an error occurred, redirect
+				e.printStackTrace();
+				req.getRequestDispatcher("productOrderError.jsp").forward(req, res);
 			}
 		} else {
 			// If someone tries to access this page without a product parameter, then redirect to products page
@@ -64,7 +65,7 @@ public class OrderServlet extends HttpServlet{
 			double price = Double.parseDouble(req.getParameter("price"));
 			long id = Long.parseLong(req.getParameter("id"));
 			// Don't care about anything else, just need name and price;
-			Product p = new Product(req.getParameter("name"), 0, 0, price, 0);
+			Product p = new Product(req.getParameter("name"), "0", 0, price);
 			p.setId(id);
 			if (cart == null) { // If there's nothing in the cart, make a new cart
 				cart = new HashMap<Product,Integer>();

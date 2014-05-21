@@ -22,16 +22,19 @@ public class ProductDAO {
 			currentCon = DriverManager.getConnection(dbName);
 			String query = "SELECT * FROM products WHERE " + key + " = ?";// + key + " = " + value;
 			s = currentCon.prepareStatement(query);
-			s.setInt(1, value);
+			if (key.equals("sku")) {
+				s.setString(1, "" + value);
+			} else {
+				s.setInt(1, value);
+			}
 			rs = s.executeQuery();
 			
 			if (rs.next()) {
 				p.setId(rs.getLong("id"));
 				p.setName(rs.getString("name"));
-				p.setSku(rs.getLong("sku"));
-				p.setCategory(rs.getInt("category"));
+				p.setSku(rs.getString("sku"));
+				p.setCategory(rs.getInt("cid"));
 				p.setPrice(rs.getDouble("price"));
-				p.setOwner(rs.getLong("owner"));
 			}
 		} finally {
 			if (rs != null) try {rs.close();} catch (SQLException ignore) {}
@@ -49,12 +52,12 @@ public class ProductDAO {
 		Hashtable<Long,Boolean> table = new Hashtable<Long,Boolean>();
 		try {
 			currentCon = DriverManager.getConnection(dbName);
-			String query = "SELECT category FROM Products";
+			String query = "SELECT cid FROM products";
 			s = currentCon.prepareStatement(query);
 			rs = s.executeQuery();
 			
 			while (rs.next()) {
-				table.put(rs.getLong("category"),false);
+				table.put(rs.getLong("cid"),false);
 			}
 		} finally {
 			if (rs != null) try {rs.close();} catch (SQLException ignore) {}
@@ -65,7 +68,14 @@ public class ProductDAO {
 		return table;
 	}
 	
-	public static List<Product> list(long id) throws SQLException{
+	/**
+	 * Lists all the products with a certain category. If the category id is negative than just
+	 * query all products.
+	 * @param id
+	 * @return
+	 * @throws SQLException
+	 */
+	public static List<Product> list(String category) throws SQLException{
 		PreparedStatement s = null;
 		List<Product> products = new ArrayList<Product>();
 
@@ -74,22 +84,27 @@ public class ProductDAO {
 			try {Class.forName("org.postgresql.Driver");} catch (ClassNotFoundException ignore) {}
 			currentCon = DriverManager.getConnection(dbName);
 			String query;
-			if (id == -1)
-				query = "SELECT * FROM products ORDER BY sku ASC";
-			else
-				query = "SELECT * FROM products WHERE category = " + id + " ORDER BY sku ASC";
+			query = "SELECT products.* FROM products";
+			if (!category.equals("*")) {
+				query += " JOIN categories ON cid = categories.id WHERE categories.name = ?";
+			}
+			
 			s = currentCon.prepareStatement(query);
+			if (!category.equals("*")) {
+				s.setString(1, category);
+			}
 			rs = s.executeQuery();
 			
 			while (rs.next()) {
 				Product product = new Product();
+				
 				product.setId(rs.getLong("id"));
 				product.setName(rs.getString("name"));
-				product.setSku(rs.getLong("sku"));
-				product.setCategory(rs.getInt("category"));
+				product.setSku(rs.getString("sku"));
+				product.setCategory(rs.getInt("cid"));
 				product.setPrice(rs.getDouble("price"));
-				product.setOwner(rs.getLong("owner"));
 				products.add(product);
+				System.out.println("product: " + product.getName());
 			}
 		} finally {
 			if (rs != null) try {rs.close();} catch (SQLException ignore) {}
@@ -99,7 +114,7 @@ public class ProductDAO {
 		return products;
 	}
 	
-	public static int alter(String query, String name, int sku, int cat, double price, long owner, int id) throws SQLException {
+	public static int alter(String query, String name, String sku, int cat, double price, int id) throws SQLException {
 		PreparedStatement s = null;
 		int parameterIndex = 1;
 		int newId;
@@ -111,17 +126,14 @@ public class ProductDAO {
 			if (name != null) {
 				s.setString(parameterIndex, name);
 				parameterIndex++;
-			} if (sku >= 0) {
-				s.setInt(parameterIndex, sku);
+			} if (sku != null) {
+				s.setString(parameterIndex, sku);
 				parameterIndex++;
 			} if (cat >= 0) {
 				s.setInt(parameterIndex, cat);
 				parameterIndex++;
 			} if (price >= 0) {
 				s.setDouble(parameterIndex, price);
-				parameterIndex++;
-			} if (owner >= 0) {
-				s.setLong(parameterIndex, owner);
 				parameterIndex++;
 			} if (id >= 0)
 				s.setInt(parameterIndex, id);

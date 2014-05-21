@@ -14,6 +14,7 @@ import javax.servlet.http.HttpSession;
 
 import cse135.model.Category;
 import cse135.model.CategoryDAO;
+import cse135.model.Product;
 import cse135.model.ProductDAO;
 import cse135.model.User;
 import cse135.model.UserDAO;
@@ -28,14 +29,15 @@ public class ProductServlet extends HttpServlet{
 		try {
 			long catID;
 			// If there's no category filter, search for all products
-			if (currCat == null)
-				catID = -1;
-			else 
-				catID = CategoryDAO.find(currCat);
+			if (currCat == null) {
+				currCat = "*";
+			}
+			//else 
+				//catID = CategoryDAO.find(currCat);
 			
 			// List all the products, if there's a category filter, only list products
 			// that are in that category
-			List<Product> products = ProductDAO.list(catID);
+			List<Product> products = ProductDAO.list(currCat);
 			req.setAttribute("productList", products);
 			
 			// Set's the filter from the search bar
@@ -82,27 +84,26 @@ public class ProductServlet extends HttpServlet{
 				sku = Integer.parseInt(req.getParameter("sku"));
 				price = Double.parseDouble(req.getParameter("price"));
 				category = Integer.parseInt(req.getParameter("category"));
-				owner = ((User)session.getAttribute("currentSessionUser")).getId();
 			}
 			if (req.getParameter("newProd") != null) {
 				// First Case: Inserting a new Product
 				// Create the product object
-				product = new Product(req.getParameter("name"), sku, category, price, owner );
+				product = new Product(req.getParameter("name"), req.getParameter("sku"), category, price);
 				
 				// Write the query string, with "?" to help avoid potential SQL injections
-				String query = "INSERT INTO products (name, sku, category, price, owner) " +
-						"VALUES (?, ?, ?, ?, ?)";
-				ProductDAO.alter(query, req.getParameter("name"), sku, category, price, owner, -1);
+				String query = "INSERT INTO products (name, sku, cid, price) " +
+						"VALUES (?, ?, ?, ?)";
+				ProductDAO.alter(query, req.getParameter("name"), req.getParameter("sku"), category, price, -1);
 				req.setAttribute("product", product);
 				req.getRequestDispatcher("productsOwnerConfirm.jsp").forward(req, res);
 			} else if (req.getParameter("update") != null) {
 				// Second Case: Updating an existing Product
-				String query = "UPDATE products SET name = ?, sku = ?, category = ?, " +
+				String query = "UPDATE products SET name = ?, sku = ?, cid = ?, " +
 						"price = ? WHERE id = ?";
 				int temp = Integer.parseInt(req.getParameter("id"));
 				
-				product = new Product(req.getParameter("name"), sku, category, price, owner );
-				ProductDAO.alter(query,req.getParameter("name"), sku, category, price, (long)-1, temp);
+				product = new Product(req.getParameter("name"), req.getParameter("sku"), category, price);
+				ProductDAO.alter(query,req.getParameter("name"), req.getParameter("sku"), category, price, temp);
 				/*HashMap<Product,Integer> map = (HashMap<Product,Integer>)session.getAttribute("cart");
 				
 				map.put(product, map.remove(ProductDAO.find("id", temp)));*/
@@ -111,7 +112,8 @@ public class ProductServlet extends HttpServlet{
 				// Third Case: Deleting an existing Product
 				int temp = Integer.parseInt(req.getParameter("id"));
 				String query = "DELETE FROM products WHERE id = ?";
-				ProductDAO.alter(query, null, -1, -1, -1, -1, temp);
+				ProductDAO.alter(query, null, null, -1, -1, temp);
+				HashMap<Product,Integer> map = (HashMap<Product,Integer>)session.getAttribute("cart");
 				res.sendRedirect("products");
 			}
 			

@@ -4,21 +4,21 @@ public class User {
 	private String name;
 	private int age;
 	private String state;
-	private boolean owner;
+	private String role;
 	private long id;
 	
 	public User() {
 		this.setName("");
 		this.setAge(0);
 		this.setState("");
-		this.setOwner(false);
+		this.setRole("");
 	}
 	
-	public User(String name, int age, String state, boolean owner, long id) {
+	public User(String name, int age, String state, String role, long id) {
 		this.setName(name);
 		this.setAge(age);
 		this.setState(state);
-		this.setOwner(owner);
+		this.setRole(role);
 		this.setId(id);
 	}
 
@@ -46,20 +46,24 @@ public class User {
 		this.state = state;
 	}
 
-	public boolean isOwner() {
-		return owner;
-	}
-
-	public void setOwner(boolean owner) {
-		this.owner = owner;
-	}
-
 	public long getId() {
 		return id;
 	}
 
 	public void setId(long id) {
 		this.id = id;
+	}
+
+	public String getRole() {
+		return role;
+	}
+
+	public void setRole(String role) {
+		this.role = role;
+	}
+	
+	public boolean isOwner() {
+		return role.contentEquals("owner");
 	}
 	
 

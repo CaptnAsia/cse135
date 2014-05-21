@@ -55,13 +55,11 @@
 			</select></td>
         	<td>$<input name="price" size="10" value="<%=df.format(p.getPrice()) %>"/></td>
         	
-        	<td><input type="Submit" name="update" value="Update"
-        	<% if (current.getId() != p.getOwner()) { %> disabled <% } %>/></td></form>
+        	<td><input type="Submit" name="update" value="Update"/></td></form>
         	<td>
         	<form action="products" method="POST">
         		<input type="hidden" value="<%=p.getId() %>" name="id"/>
-        		<input type="Submit" name="delete" value="Delete"
-        		<% if (current.getId() != p.getOwner()) { %> disabled<% } %>/>
+        		<input type="Submit" name="delete" value="Delete"/>
         	</form></td>
         	
         </tr>

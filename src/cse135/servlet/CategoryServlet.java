@@ -24,6 +24,7 @@ public class CategoryServlet extends HttpServlet {
 			// If not then let the .jsp file know that the user doesn't have permission to view this page
 			req.setAttribute("permission", false);
 			req.getRequestDispatcher("categories.jsp").forward(req, res);
+			return;
 		} else {
 			// Else everything goes as planned
 			try {
@@ -35,6 +36,7 @@ public class CategoryServlet extends HttpServlet {
 			req.setAttribute("permission", true);
 			req.setAttribute("delete", canDelete);
 			req.getRequestDispatcher("categories.jsp").forward(req, res);
+			return;
 		}
 		
 	}
