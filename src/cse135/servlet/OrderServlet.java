@@ -62,7 +62,7 @@ public class OrderServlet extends HttpServlet{
 				// Errors if quantity is less than 0
 				throw new NumberFormatException();
 			}
-			double price = Double.parseDouble(req.getParameter("price"));
+			int price = Integer.parseInt(req.getParameter("price"));
 			long id = Long.parseLong(req.getParameter("id"));
 			// Don't care about anything else, just need name and price;
 			Product p = new Product(req.getParameter("name"), "0", 0, price);

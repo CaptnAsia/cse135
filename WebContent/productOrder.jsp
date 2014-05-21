@@ -21,7 +21,7 @@
 	<div class="title2">New Order</div>
 	<form action="order" method="POST">
 		<input type="hidden" name="name" value="<%=p.getName() %>"/>
-		<input type="hidden" name="price" value="<%=df.format(p.getPrice())%>"/>
+		<input type="hidden" name="price" value="<%=p.getPrice()%>"/>
 		<input type="hidden" name="id" value="<%=p.getId() %>"/>
 		<table>
 			<th>Name</th>
@@ -30,7 +30,7 @@
 		
 			<tr>
 			<td class="name"><%=p.getName() %></td>
-			<td class="price">$<%=df.format(p.getPrice()) %></td>
+			<td class="price">$<%=p.getPrice() %></td>
 			<td class="quantity"><input name="quantity" value="1"/></td>
 			</tr>
 		</table>

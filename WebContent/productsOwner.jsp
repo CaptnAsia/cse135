@@ -53,7 +53,7 @@
 				<%=c.getName()%></option>
 			<% } %>
 			</select></td>
-        	<td>$<input name="price" size="10" value="<%=df.format(p.getPrice()) %>"/></td>
+        	<td>$<input name="price" size="10" value="<%=p.getPrice() %>"/></td>
         	
         	<td><input type="Submit" name="update" value="Update"/></td></form>
         	<td>

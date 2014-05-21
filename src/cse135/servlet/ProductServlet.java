@@ -64,7 +64,7 @@ public class ProductServlet extends HttpServlet{
 		String error = "";
 		Product product;
 		int sku = 0;
-		double price = 0;
+		int price = 0;
 		int category = 0;
 		long owner = 0;
 		
@@ -82,7 +82,7 @@ public class ProductServlet extends HttpServlet{
 			if (req.getParameter("delete") == null) {
 				// need to set variables for posts that are not delete posts
 				sku = Integer.parseInt(req.getParameter("sku"));
-				price = Double.parseDouble(req.getParameter("price"));
+				price = Integer.parseInt(req.getParameter("price"));
 				category = Integer.parseInt(req.getParameter("category"));
 			}
 			if (req.getParameter("newProd") != null) {

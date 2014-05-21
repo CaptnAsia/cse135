@@ -1,5 +1,5 @@
 <% DecimalFormat df = new DecimalFormat("#.00");
-   double total = 0;%>
+   int total = 0;%>
 <div style="height:10px;"></div>
 	<div><% if (cart != null) { %>
 		<table>
@@ -9,11 +9,11 @@
 			<% for (Map.Entry<Product, Integer> cartList : cart.entrySet()) { %>
 			<tr>
 				<td class="name"><%=cartList.getKey().getName() %></td>
-				<td class="price">$<%=df.format(cartList.getKey().getPrice()) %></td>
+				<td class="price">$<%=cartList.getKey().getPrice() %></td>
 				<td class="quantity"><%=cartList.getValue() %></td>
 			</tr><% total += cartList.getKey().getPrice()*cartList.getValue();} %>
 			<tr>
 		</table><table class="last"><tr>
 		<div style="height:5px;"></div>
 		<td class="name last" style="text-align: right;">Total:</td>
-		<td class="price last">$<%=df.format(total) %></td><td class="quantity last"></tr></table><%} else { %>Nothing in your cart yet! <% } %></div>
+		<td class="price last">$<%=total %></td><td class="quantity last"></tr></table><%} else { %>Nothing in your cart yet! <% } %></div>

@@ -45,7 +45,7 @@
         <tr>
         	<td><%= p.getSku() %></td>
         	<td><%= p.getName() %></td>
-        	<td>$<%= df.format(p.getPrice()) %></td>
+        	<td>$<%= p.getPrice() %></td>
         	<td><a href="order?product=<%=p.getSku()%>">Buy</a></form>
         </tr>
         <% } } %>

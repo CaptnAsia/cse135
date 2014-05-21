@@ -66,7 +66,7 @@ public class BuyCartServlet extends HttpServlet{
 					req.getRequestDispatcher("buyConfirm.jsp").forward(req, res);
 				}
 				
-			} catch (NumberFormatException e) {
+			} catch (NumberFormatException | SQLException e) {
 				e.printStackTrace();
 				req.setAttribute("result", error);
 				req.getRequestDispatcher("buyConfirm.jsp").forward(req, res);

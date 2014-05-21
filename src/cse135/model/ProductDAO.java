@@ -34,7 +34,7 @@ public class ProductDAO {
 				p.setName(rs.getString("name"));
 				p.setSku(rs.getString("sku"));
 				p.setCategory(rs.getInt("cid"));
-				p.setPrice(rs.getDouble("price"));
+				p.setPrice(rs.getInt("price"));
 			}
 		} finally {
 			if (rs != null) try {rs.close();} catch (SQLException ignore) {}
@@ -102,7 +102,7 @@ public class ProductDAO {
 				product.setName(rs.getString("name"));
 				product.setSku(rs.getString("sku"));
 				product.setCategory(rs.getInt("cid"));
-				product.setPrice(rs.getDouble("price"));
+				product.setPrice(rs.getInt("price"));
 				products.add(product);
 				System.out.println("product: " + product.getName());
 			}
@@ -114,7 +114,7 @@ public class ProductDAO {
 		return products;
 	}
 	
-	public static int alter(String query, String name, String sku, int cat, double price, int id) throws SQLException {
+	public static int alter(String query, String name, String sku, int cat, int price, int id) throws SQLException {
 		PreparedStatement s = null;
 		int parameterIndex = 1;
 		int newId;
@@ -133,7 +133,7 @@ public class ProductDAO {
 				s.setInt(parameterIndex, cat);
 				parameterIndex++;
 			} if (price >= 0) {
-				s.setDouble(parameterIndex, price);
+				s.setInt(parameterIndex, price);
 				parameterIndex++;
 			} if (id >= 0)
 				s.setInt(parameterIndex, id);
