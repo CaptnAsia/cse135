@@ -72,5 +72,14 @@
  		<servlet-name>buyCart</servlet-name>
  		<url-pattern>/buyCart</url-pattern>
  	</servlet-mapping>
+ 	
+ 	<servlet>
+ 		<servlet-name>sales</servlet-name>
+ 		<servlet-class>cse135.servlet.SalesServlet</servlet-class>
+ 	</servlet>
+ 	<servlet-mapping>
+ 		<servlet-name>sales</servlet-name>
+ 		<url-pattern>/sales</url-pattern>
+ 	</servlet-mapping>
 
 </web-app>

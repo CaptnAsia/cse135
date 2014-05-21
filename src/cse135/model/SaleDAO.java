@@ -26,4 +26,51 @@ public class SaleDAO {
 			if (currentCon != null) try {currentCon.close();} catch (SQLException ignore) {}
 		}
 	}
+	
+	public static HashMap<String, int[]> listProducts(String name, String rows, ArrayList<String> title) throws SQLException {
+		PreparedStatement s = null;
+		int[] pid = new int[10];
+		HashMap<String, int[]> map = new HashMap<String, int[]>();
+		try {
+			try {Class.forName("org.postgresql.Driver");} catch (ClassNotFoundException ignore) {}
+			currentCon = DriverManager.getConnection(dbName);
+			String query = "SELECT name, id FROM products WHERE name > '" + name + "' ORDER BY name ASC LIMIT 10 ";
+			s = currentCon.prepareStatement(query);
+			rs = s.executeQuery();
+			query = "SELECT " + rows;
+			int i = 0;
+			while(rs.next()) {
+				query += ", s" + i + ".quantity as q"+i;
+				pid[i] = rs.getInt("id");
+				i++;
+				
+				title.add(rs.getString("name"));
+			}
+			query += "\nfrom (users \n";
+			
+			for (int j = 0; j < 10; j++) {
+				query += "left join sales as s" + j + " on s" + j + ".uid = users.id and s" + j + ".pid = " + pid[j] + "\n";
+			}
+			
+			query += ")";
+			System.out.println(query);
+			s = currentCon.prepareStatement(query);
+			rs = s.executeQuery();
+			
+			while(rs.next()) {
+				int[] value = new int[10];
+				for (int j = 0; j <10; j++) {
+					value[j] = rs.getInt("q"+j);
+				}
+				map.put(rs.getString(rows.substring(rows.indexOf('.')+1)), value);
+			}
+			
+		} finally {
+			if (rs != null) try {rs.close();} catch (SQLException ignore) {}
+			if (s != null) try {s.close();} catch (SQLException ignore) {}
+			if (currentCon != null) try {currentCon.close();} catch (SQLException ignore) {}
+		}
+		
+		return map;
+	}
 }

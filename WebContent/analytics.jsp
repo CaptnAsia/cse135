@@ -13,7 +13,23 @@
 <%@ include file="WEB-INF/header.jsp" %>
 <div class="wrapper">
 <div class="title1">Sales Analytics</div>
-
+<div>Products</div>
+<% List<String> products = (List<String>)request.getAttribute("products"); 
+   Map<String, int[]> map = (Map<String, int[]>)request.getAttribute("rows");%>
+<table border="1">
+	<tr>
+		<th></th>
+	<% for (String p : products) { %>
+		<th><%=p %></th>
+	<%} %>
+	</tr>
+	<% for (Map.Entry<String, int[]> row : map.entrySet()) { %>
+	<tr>
+		<td><%=row.getKey() %></td>
+		<% for (int i = 0; i < 10; i++) { %>
+		<td><%=row.getValue()[i] %></td> <%} %>
+	</tr><%} %>
+</table>
 </div>
 </body>
 </html>
