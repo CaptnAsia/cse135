@@ -26,7 +26,7 @@
 	<% for (Map.Entry<String, int[]> row : map.entrySet()) { %>
 	<tr>
 		<td><%=row.getKey() %></td>
-		<% for (int i = 0; i < 10; i++) { %>
+		<% for (int i = 0; i < row.getValue().length; i++) { %>
 		<td><%=row.getValue()[i] %></td> <%} %>
 	</tr><%} %>
 </table>

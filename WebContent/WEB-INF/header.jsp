@@ -13,7 +13,7 @@ if (current == null) {%>
 <% } else { %>
 Hello <%=current.getName() %> | <%
 if (current.isOwner()) { %><a href="categories">Categories</a> | 
-<% } %><a href="products">Products</a>
+<% } %><a href="products">Products</a> | <a href="sales">Sales Analytics</a>
 <%} %></div><% if (current == null || !current.isOwner()) { %>
 <div class="buyCart"><a href="buyCart">Buy Shopping Cart</a> <% if (cart != null) { %>(<%= cart.size() %>) <% } }%></div></div>
 

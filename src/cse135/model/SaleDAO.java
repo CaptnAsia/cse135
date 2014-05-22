@@ -52,7 +52,11 @@ public class SaleDAO {
 				query += "left join sales as s" + j + " on s" + j + ".uid = users.id and s" + j + ".pid = " + pid[j] + "\n";
 			}
 			
-			query += ")";
+			query += ") ";
+			if (rows.equals("users.name")) {
+				query += "WHERE users.role = 'customer' ";
+			}
+			query += "ORDER BY " + rows + " LIMIT 20";
 			System.out.println(query);
 			s = currentCon.prepareStatement(query);
 			rs = s.executeQuery();
