@@ -27,10 +27,10 @@ public class SaleDAO {
 		}
 	}
 	
-	public static HashMap<String, int[]> listProducts(String name, String rows, ArrayList<String> title) throws SQLException {
+	public static TreeMap<String, int[]> listProducts(String name, String rows, ArrayList<String> title) throws SQLException {
 		PreparedStatement s = null;
 		int[] pid = new int[10];
-		HashMap<String, int[]> map = new HashMap<String, int[]>();
+		TreeMap<String, int[]> map = new TreeMap<String, int[]>();
 		try {
 			try {Class.forName("org.postgresql.Driver");} catch (ClassNotFoundException ignore) {}
 			currentCon = DriverManager.getConnection(dbName);
@@ -40,7 +40,7 @@ public class SaleDAO {
 			query = "SELECT " + rows;
 			int i = 0;
 			while(rs.next()) {
-				query += ", s" + i + ".quantity as q"+i;
+				query += ", s" + i + ".quantity * s" + i + ".price" + " as q"+i;
 				pid[i] = rs.getInt("id");
 				i++;
 				
@@ -56,7 +56,7 @@ public class SaleDAO {
 			if (rows.equals("users.name")) {
 				query += "WHERE users.role = 'customer' ";
 			}
-			query += "ORDER BY " + rows + " LIMIT 20";
+			query += "ORDER BY " + rows + " ASC LIMIT 20";
 			System.out.println(query);
 			s = currentCon.prepareStatement(query);
 			rs = s.executeQuery();
