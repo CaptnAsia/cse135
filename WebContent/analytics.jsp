@@ -13,11 +13,21 @@
 <%@ include file="WEB-INF/header.jsp" %>
 <div class="wrapper">
 <div class="title1">Sales Analytics</div>
+<div style="margin-top: 5px; margin-bottom: 5px">
 <% List<String> products = (List<String>)request.getAttribute("products"); 
    TreeMap<String, int[]> map = (TreeMap<String, int[]>)request.getAttribute("rows");
    String rows = request.getParameter("rows");
-   List<Category> categories = (List<Category>)request.getAttribute("categories");%>
-<div style="margin-top: 5px; margin-bottom: 5px"><div class="title2">Query Options</div>
+   List<Category> categories = (List<Category>)request.getAttribute("categories");
+   String attr[] = new String[4];
+   attr[0] = (request.getParameter("rows") != null && request.getParameter("rows").equals("states")) ? "States" : "Customers";
+   
+   // If the next button is clicked, you can't change the current queries
+   if (request.getAttribute("next") != null) { 
+   attr = (String[])request.getAttribute("next"); %>
+<b><%=attr[0] %></b> Age: <b><%=attr[1] %></b> Category: <b><%=attr[2] %></b>
+<% } else { %>
+<div class="title2">Query Options</div>
+<% // This is the form for queries %>
 <form method="GET">
 	<select name="rows">
 		<option value="customers">Customers</option>
@@ -37,7 +47,23 @@
 	 	<%} %>
 	 </select>
 	<input type="submit" value="Run Query"/>
-</form></div>
+</form>
+<% } %>
+<% // This is the form for the next 20 rows / 10 collumns %>
+<form method="POST">
+	<input type="hidden" name="rows" value="<%=request.getParameter("rows") %>"/>
+	<input type="hidden" name="ages" value="<%=request.getParameter("ages") %>"/>
+	<input type="hidden" name="category" value="<%=request.getParameter("category") %>"/>
+	<% // For both of these, it basically says if the rowOffset attr is not null then set it to the offset + 20 or 10 more
+	   int rowRange = (request.getAttribute("rowOffset") != null) ? ((Integer)request.getAttribute("rowOffset")+20) : 20;
+	   int prodRange = (request.getAttribute("prodOffset") != null) ? ((Integer)request.getAttribute("prodOffset")+10) : 10;%>
+	<input type="hidden" name="rowRange" value="<%=rowRange %>"/>
+	<input type="hidden" name="prodRange" value="<%=prodRange %>"/>
+	<% if (products.size() == 10) { %>
+	<input type="submit" name="prodSubmit" value="Next 10 Products"/>
+	<% } if (map.size() == 20) { %>
+	<input type="submit" name="rowSubmit" value="Next 20 <%=attr[0]%>"/>
+	<% } %></form></div>
 <table border="1">
 	<tr>
 		<th></th>

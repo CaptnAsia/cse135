@@ -104,7 +104,7 @@ public class ProductDAO {
 				product.setCategory(rs.getInt("cid"));
 				product.setPrice(rs.getInt("price"));
 				products.add(product);
-				System.out.println("product: " + product.getName());
+				//System.out.println("product: " + product.getName());
 			}
 		} finally {
 			if (rs != null) try {rs.close();} catch (SQLException ignore) {}
