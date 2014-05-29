@@ -27,7 +27,7 @@ public class SaleDAO {
 		}
 	}
 	
-	public static TreeMap<String, int[]> listProducts( String rows, ArrayList<String> title, int userOffset, int prodOffset) throws SQLException {
+	public static TreeMap<String, int[]> listProducts( String rows, ArrayList<String> title, int userOffset, int prodOffset, String ages, String cat) throws SQLException {
 		PreparedStatement s = null;
 		int[] pid = new int[10];
 		// TreeMap because it'll be ordered
@@ -37,7 +37,15 @@ public class SaleDAO {
 			currentCon = DriverManager.getConnection(dbName);
 			
 			// Select the name and id of the products alphabetically, offset (meaning, start after this amount) by prodOffset
-			String query = "SELECT name, id FROM products ORDER BY name ASC LIMIT 10 OFFSET " + prodOffset;
+			String query = "SELECT p.name, p.id FROM products AS p";
+			
+			if ( cat != null && !cat.equals("null") && !cat.equals("all") ) {
+				query += (" JOIN categories AS c ON p.cid = c.id WHERE c.name = '" + cat + "'");
+			}
+			
+			query += (" ORDER BY name ASC LIMIT 10 OFFSET " + prodOffset);
+			
+			//System.out.println(query);
 			s = currentCon.prepareStatement(query);
 			
 			// nanoTime for testing purposes
@@ -65,7 +73,7 @@ public class SaleDAO {
 			}
 			
 			// Now that we have the attributes we want, specify the tables to look at which is the user that we join with the sales table
-			query += "\nfrom (users \n";
+			query += "\nFROM (users \n";
 			
 			for (int j = 0; j < i; j++) {
 				/* This line basically means that we should join on the sales table, with the user id the same as the sales.uid
@@ -83,9 +91,27 @@ public class SaleDAO {
 			 * And finally limit the query to 20 at a time, offsetting by the given offset
 			 * TODO: add the other query restrictions here...maybe. Not sure
 			 */
-			query += ") WHERE users.role = 'customer' ";
-			query += "GROUP BY " + rows + " ORDER BY " + rows + " ASC";
-			query += " LIMIT 20 OFFSET " + userOffset;//LIMIT 20 ";//OFFSET ";//+ userOffset;
+			query += ") WHERE users.role = 'customer'";
+
+
+
+			if ( ages != null && !ages.equals("null") && !ages.equals("0") ) {
+				if ( !ages.equals("4") ) {
+					int v1 = 0, v2 = 0;
+					switch ( Integer.parseInt(ages) ) {
+						case 1: v1 = 12; v2 = 18; break;
+						case 2: v1 = 18; v2 = 45; break;
+						case 3: v1 = 45; v2 = 65; break;
+					}
+					query += (" AND users.age BETWEEN " + v1 + " AND " + v2);
+				}
+				else {
+					query += " AND users.age >= 65";
+				}	
+			}
+			
+			query += (" GROUP BY " + rows + " ORDER BY " + rows + " ASC");
+			query += (" LIMIT 20 OFFSET " + userOffset);
 			
 			// This is the final query based on everything else
 			System.out.println(query);

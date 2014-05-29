@@ -17,9 +17,25 @@
 <% List<String> products = (List<String>)request.getAttribute("products"); 
    TreeMap<String, int[]> map = (TreeMap<String, int[]>)request.getAttribute("rows");
    String rows = request.getParameter("rows");
+   String ages = request.getParameter("ages");
+   String cat = request.getParameter("category");
    List<Category> categories = (List<Category>)request.getAttribute("categories");
    String attr[] = new String[4];
    attr[0] = (request.getParameter("rows") != null && request.getParameter("rows").equals("states")) ? "States" : "Customers";
+   attr[1] = (request.getParameter("ages") != null) ? request.getParameter("ages") : "0";
+   if ( attr[1] != null && !attr[1].equals("null")) {
+     switch (Integer.parseInt(attr[1])) {
+       case 1: attr[1] = "12 - 18"; break;
+       case 2: attr[1] = "18 - 45"; break;
+       case 3: attr[1] = "45 - 65"; break;
+       case 4: attr[1] = "65+"; break;
+     }  
+   }
+   attr[2] = (request.getParameter("category") != null) ? request.getParameter("category") : "all";
+   
+   System.out.println("rows = " + rows);
+   System.out.println("ages = " + ages);
+   System.out.println("cat = " + cat);
    
    // If the next button is clicked, you can't change the current queries
    if (request.getAttribute("next") != null) { 
@@ -29,21 +45,22 @@
 <div class="title2">Query Options</div>
 <% // This is the form for queries %>
 <form method="GET">
+<% System.out.println("JSP"); %>
 	<select name="rows">
 		<option value="customers">Customers</option>
 		<option value="states" <% if (rows != null && rows.equals("states")) { %>selected="selected" <%} %>>States</option>
 	</select>
 	 Age: <select name="ages">
-	 	<option value="0">All Ages</option>
-	 	<option value="1">12-18</option>
-	 	<option value="2">18-45</option>
-	 	<option value="3">45-65</option>
-	 	<option value="4">65+</option>
+	 	<option value="0" <% if (ages != null && ages.equals("0")) { %>selected="selected" <%} %>>All Ages</option>
+	 	<option value="1" <% if (ages != null && ages.equals("1")) { %>selected="selected" <%} %>>12-18</option>
+	 	<option value="2" <% if (ages != null && ages.equals("2")) { %>selected="selected" <%} %>>18-45</option>
+	 	<option value="3" <% if (ages != null && ages.equals("3")) { %>selected="selected" <%} %>>45-65</option>
+	 	<option value="4" <% if (ages != null && ages.equals("4")) { %>selected="selected" <%} %>>65+</option>
 	 </select>
 	 Category: <select name="category">
 	 	<option value="all">All Categories</option>
 	 	<% for (Category c : categories) {%>
-	 	<option><%=c.getName() %></option>
+	 	<option value="<%=c.getName() %>" <% if (cat != null && cat.equals(c.getName())) { %>selected="selected" <%} %>><%=c.getName() %></option>
 	 	<%} %>
 	 </select>
 	<input type="submit" value="Run Query"/>
@@ -64,6 +81,7 @@
 	<% } if (map.size() == 20) { %>
 	<input type="submit" name="rowSubmit" value="Next 20 <%=attr[0]%>"/>
 	<% } %></form></div>
+	
 <table border="1">
 	<tr>
 		<th></th>
