@@ -31,7 +31,7 @@ public class SalesServlet extends HttpServlet {
 				res.sendRedirect("products");
 				return;
 			}
-			map = SaleDAO.listProducts( rows,list,0, 0);
+			map = SaleDAO.listProducts(rows,list,0, 0);
 			req.setAttribute("products", list);
 			req.setAttribute("rows", map);
 			req.getRequestDispatcher("analytics.jsp").forward(req, res);

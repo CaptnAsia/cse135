@@ -88,13 +88,13 @@ public class SaleDAO {
 			query += " LIMIT 20 OFFSET " + userOffset;//LIMIT 20 ";//OFFSET ";//+ userOffset;
 			
 			// This is the final query based on everything else
-			System.out.println(query);
+			//System.out.println(query);
 			s = currentCon.prepareStatement(query);
 			
 			startTime = System.nanoTime();
 			rs = s.executeQuery();
 			endTime = System.nanoTime();
-			//System.out.println("2d: "+ (endTime - startTime));
+			System.out.println("2d: "+ (endTime - startTime));
 			
 			while(rs.next()) {
 				int[] value = new int[i];
