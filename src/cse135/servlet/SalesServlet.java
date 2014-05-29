@@ -36,14 +36,11 @@ public class SalesServlet extends HttpServlet {
 				res.sendRedirect("products");
 				return;
 			}
-<<<<<<< HEAD
-			map = SaleDAO.listProducts(rows,list,0, 0);
-=======
+			
 			System.out.println("GET SERVLET.. ages = " + ages);
 			System.out.println("GET SERVLET.. ages = null is " + (ages == null));
 			
 			map = SaleDAO.listProducts( rows, list, 0, 0, ages, cat);
->>>>>>> ericP2
 			req.setAttribute("products", list);
 			req.setAttribute("rows", map);
 			req.setAttribute("ages", ages);
