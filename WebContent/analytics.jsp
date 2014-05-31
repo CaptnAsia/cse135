@@ -19,6 +19,7 @@
    String rows = request.getParameter("rows");
    String ages = request.getParameter("ages");
    String cat = request.getParameter("category");
+   String state = request.getParameter("state");
    List<Category> categories = (List<Category>)request.getAttribute("categories");
    String attr[] = new String[4];
    attr[0] = (request.getParameter("rows") != null && request.getParameter("rows").equals("states")) ? "States" : "Customers";
@@ -33,23 +34,21 @@
    }
    attr[2] = (request.getParameter("category") != null) ? request.getParameter("category") : "all";
    
-   System.out.println("rows = " + rows);
-   System.out.println("ages = " + ages);
-   System.out.println("cat = " + cat);
-   
    // If the next button is clicked, you can't change the current queries
    if (request.getAttribute("next") != null) { 
    attr = (String[])request.getAttribute("next"); %>
-<b><%=attr[0] %></b> Age: <b><%=attr[1] %></b> Category: <b><%=attr[2] %></b>
+<b><%=attr[0] %></b> State: <b><%=attr[3] %></b> Age: <b><%=attr[1] %></b> Category: <b><%=attr[2] %></b>
 <% } else { %>
 <div class="title2">Query Options</div>
 <% // This is the form for queries %>
 <form method="GET">
-<% System.out.println("JSP"); %>
+	
 	<select name="rows">
 		<option value="customers">Customers</option>
 		<option value="states" <% if (rows != null && rows.equals("states")) { %>selected="selected" <%} %>>States</option>
 	</select>
+	State: 
+	<%@ include file="WEB-INF/stateDropdown.jsp" %>
 	 Age: <select name="ages">
 	 	<option value="0" <% if (ages != null && ages.equals("0")) { %>selected="selected" <%} %>>All Ages</option>
 	 	<option value="1" <% if (ages != null && ages.equals("1")) { %>selected="selected" <%} %>>12-18</option>
@@ -71,6 +70,7 @@
 	<input type="hidden" name="rows" value="<%=request.getParameter("rows") %>"/>
 	<input type="hidden" name="ages" value="<%=request.getParameter("ages") %>"/>
 	<input type="hidden" name="category" value="<%=request.getParameter("category") %>"/>
+	<input type="hidden" name="state" value="<%=request.getParameter("state") %>"/>
 	<% // For both of these, it basically says if the rowOffset attr is not null then set it to the offset + 20 or 10 more
 	   int rowRange = (request.getAttribute("rowOffset") != null) ? ((Integer)request.getAttribute("rowOffset")+20) : 20;
 	   int prodRange = (request.getAttribute("prodOffset") != null) ? ((Integer)request.getAttribute("prodOffset")+10) : 10;%>

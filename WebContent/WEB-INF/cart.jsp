@@ -1,17 +1,17 @@
-<% DecimalFormat df = new DecimalFormat("#.00");
-   int total = 0;%>
+<% int total = 0;%>
 <div style="height:10px;"></div>
 	<div><% if (cart != null) { %>
 		<table>
 			<th>Name</th>
 			<th>Price</th>
 			<th>Amt</th>
-			<% for (Map.Entry<Product, Integer> cartList : cart.entrySet()) { %>
+			<% for (Order o : cart) {//for (Map.Entry<Product, Integer> cartList : cart.entrySet()) { %>
 			<tr>
-				<td class="name"><%=cartList.getKey().getName() %></td>
-				<td class="price">$<%=cartList.getKey().getPrice() %></td>
-				<td class="quantity"><%=cartList.getValue() %></td>
-			</tr><% total += cartList.getKey().getPrice()*cartList.getValue();} %>
+				
+				<td class="name"><%= o.getName()%></td>
+				<td class="price">$<%=o.getPrice()%></td>
+				<td class="quantity"><%=o.getAmount()%></td>
+			</tr><% total += o.getPrice()*o.getAmount();} %>
 			<tr>
 		</table><table class="last"><tr>
 		<div style="height:5px;"></div>

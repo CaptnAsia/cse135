@@ -1,8 +1,6 @@
 <%@ page import="cse135.model.*" %>
-<%@ page import="java.util.HashMap" %>
-<%@ page import="java.util.Map" %>
-<%@ page import="java.util.Map.Entry;" %>
-<% Map<Product,Integer> cart = (HashMap<Product,Integer>)session.getAttribute("cart");
+<%@ page import="java.util.*" %>
+<% List<Order> cart = (List<Order>)request.getAttribute("cart");
    User current = (User)session.getAttribute("currentSessionUser"); 
 %>
 <div class="header">
@@ -14,7 +12,7 @@ if (current == null) {%>
 Hello <%=current.getName() %> | <%
 if (current.isOwner()) { %><a href="categories">Categories</a> | 
 <% } %><a href="products">Products</a> | <a href="sales">Sales Analytics</a>
-<%} %></div><% if (current == null || !current.isOwner()) { %>
+<%} %></div><% if (current != null && !current.isOwner()) { %>
 <div class="buyCart"><a href="buyCart">Buy Shopping Cart</a> <% if (cart != null) { %>(<%= cart.size() %>) <% } }%></div></div>
 
 </div>

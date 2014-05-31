@@ -27,7 +27,8 @@ public class SaleDAO {
 		}
 	}
 	
-	public static TreeMap<String, int[]> listProducts( String rows, ArrayList<String> title, int userOffset, int prodOffset, String ages, String cat) throws SQLException {
+	public static TreeMap<String, int[]> listProducts( String rows, ArrayList<String> title, int userOffset, 
+			int prodOffset, String ages, String cat, String state) throws SQLException {
 		PreparedStatement s = null;
 		int[] pid = new int[10];
 		// TreeMap because it'll be ordered
@@ -35,45 +36,50 @@ public class SaleDAO {
 		try {
 			try {Class.forName("org.postgresql.Driver");} catch (ClassNotFoundException ignore) {}
 			currentCon = DriverManager.getConnection(dbName);
-			
+			boolean category =  cat != null && !cat.equals("null") && !cat.equals("all");
 			// Select the name and id of the products alphabetically, offset (meaning, start after this amount) by prodOffset
-			String query = "SELECT p.name, p.id FROM products AS p";
+			String query = "SELECT p.name, p.id, sum(s.quantity*s.price) as total FROM (products AS p";//products AS p";
 			
-			if ( cat != null && !cat.equals("null") && !cat.equals("all") ) {
-				query += (" JOIN categories AS c ON p.cid = c.id WHERE c.name = '" + cat + "'");
+			if ( category ) {
+				query += (" JOIN categories AS c ON p.cid = c.id");
 			}
 			
-			query += (" ORDER BY name ASC LIMIT 10 OFFSET " + prodOffset);
+			query += (") LEFT JOIN sales AS s ON p.id = pid ");
+			if ( category ) {
+				query += "WHERE c.name = '" + cat + "'";
+			}
+			query += " GROUP BY p.name, p.id ORDER BY name ASC LIMIT 10 OFFSET " + prodOffset;
 			
-			//System.out.println(query);
+			
+			System.out.println(query);
 			s = currentCon.prepareStatement(query);
 			
 			// nanoTime for testing purposes
 			long startTime = System.nanoTime();
 			rs = s.executeQuery();
-			long endTime = System.nanoTime();
-			System.out.println("products: " + (endTime-startTime));
+			
+			//System.out.println("products: " + (endTime-startTime));
 			
 			/* Already start loading the next query needed for the 2d matrix
 			 * example: SELECT user.name... or SELECT user.state...
 			 */
-			query = "SELECT " + rows;
+			query = "SELECT " + rows + ", SUM(sales.quantity*sales.price) AS total";
 			int i = 0;
 			while(rs.next()) {
 				// basically, get the sum of the money spent by a single person and that's 1 collumn
 				// example looks like 'sum(s1.quantity * s1.price) as q1...'
-				query += ", sum(s" + i + ".quantity * s" + i + ".price)" + " as q"+i;
+				query += ", SUM(s" + i + ".quantity * s" + i + ".price)" + " AS q"+i;
 				
 				// store the product id for use later
 				pid[i] = rs.getInt("id");
 				i++;
 				
 				// add the 
-				title.add(rs.getString("name"));
+				title.add(rs.getString("name")+"\n$"+rs.getInt("total"));
 			}
 			
 			// Now that we have the attributes we want, specify the tables to look at which is the user that we join with the sales table
-			query += "\nFROM (users \n";
+			query += "\nFROM (users \nLEFT JOIN sales ON users.id = sales.uid\n";
 			
 			for (int j = 0; j < i; j++) {
 				/* This line basically means that we should join on the sales table, with the user id the same as the sales.uid
@@ -81,7 +87,7 @@ public class SaleDAO {
 				 * example: LEFT JOIN sales AS s1 ON s1.uid = users.id AND s1.pid = 328..."
 				 * Note that every product has its own column, which is why we need these aliases s1, s2....etc
 				 */
-				query += "left join sales as s" + j + " on s" + j + ".uid = users.id and s" + j + ".pid = " + pid[j] + "\n";
+				query += "LEFT JOIN sales AS s" + j + " ON s" + j + ".uid = users.id AND s" + j + ".pid = " + pid[j] + "\n";
 			}
 			
 			/* Now the restrictions:
@@ -92,8 +98,6 @@ public class SaleDAO {
 			 * TODO: add the other query restrictions here...maybe. Not sure
 			 */
 			query += ") WHERE users.role = 'customer'";
-
-
 
 			if ( ages != null && !ages.equals("null") && !ages.equals("0") ) {
 				if ( !ages.equals("4") ) {
@@ -110,17 +114,20 @@ public class SaleDAO {
 				}	
 			}
 			
+			if (state != null && !state.equals("null") && !state.equals("All")) {
+				query += " AND users.state = '" + state + "'";
+			}
+			
 			query += (" GROUP BY " + rows + " ORDER BY " + rows + " ASC");
 			query += (" LIMIT 20 OFFSET " + userOffset);
 			
 			// This is the final query based on everything else
-			//System.out.println(query);
+			System.out.println(query);
 			s = currentCon.prepareStatement(query);
 			
-			startTime = System.nanoTime();
 			rs = s.executeQuery();
-			endTime = System.nanoTime();
-			System.out.println("2d: "+ (endTime - startTime));
+			long endTime = System.nanoTime();
+			//System.out.println(""+ (endTime - startTime));
 			
 			while(rs.next()) {
 				int[] value = new int[i];
@@ -132,7 +139,7 @@ public class SaleDAO {
 				/* put the int array in the treemap; user name is the key, int array is the value
 				 * have to do rows.indexOf because you need to parse the rows to just name or state
 				 */
-				map.put(rs.getString(rows.substring(rows.indexOf('.')+1)), value);
+				map.put(rs.getString(rows.substring(rows.indexOf('.')+1))+"\n$"+rs.getInt("total"), value);
 			}
 			
 		} finally {

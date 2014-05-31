@@ -15,7 +15,6 @@ import cse135.model.SaleDAO;
 
 public class SalesServlet extends HttpServlet {
 	protected void doGet (HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
-		System.out.println("GET");
 		
 		TreeMap<String,int[]> map;
 		ArrayList<String> list = new ArrayList<String>();
@@ -27,6 +26,7 @@ public class SalesServlet extends HttpServlet {
 			String rows = req.getParameter("rows");
 			String ages = req.getParameter("ages");
 			String cat = req.getParameter("category");
+			String states = req.getParameter("state");
 			
 			if (rows == null || rows.equals("customers"))
 				rows = "users.name";
@@ -37,10 +37,7 @@ public class SalesServlet extends HttpServlet {
 				return;
 			}
 			
-			System.out.println("GET SERVLET.. ages = " + ages);
-			System.out.println("GET SERVLET.. ages = null is " + (ages == null));
-			
-			map = SaleDAO.listProducts( rows, list, 0, 0, ages, cat);
+			map = SaleDAO.listProducts( rows, list, 0, 0, ages, cat, states);
 			req.setAttribute("products", list);
 			req.setAttribute("rows", map);
 			req.setAttribute("ages", ages);
@@ -65,6 +62,7 @@ public class SalesServlet extends HttpServlet {
 			String rows = req.getParameter("rows");
 			String ages = req.getParameter("ages");
 			String cat = req.getParameter("category");
+			String state = req.getParameter("state");
 			
 			// Sets which type of rows to show.
 			if (rows.equals("null") || rows.equals("customers"))
@@ -75,10 +73,6 @@ public class SalesServlet extends HttpServlet {
 				res.sendRedirect("products");
 				return;
 			}
-			
-			System.out.println("POST SERVLET.. ages = " + ages);
-			System.out.println("POST SERVLET.. ages = null is " + (ages == null));
-			System.out.println("POST SERVLET.. ages = 'null' is " + ages.equals("null"));
 			
 			// r and p are the row/col offsets
 			Integer r = (Integer.parseInt(rowOffset));
@@ -97,14 +91,15 @@ public class SalesServlet extends HttpServlet {
 			req.setAttribute("rowOffset", r);
 			
 			// do the query
-			map = SaleDAO.listProducts(rows, list, r, p, ages, cat);
+			map = SaleDAO.listProducts(rows, list, r, p, ages, cat, state);
 			req.setAttribute("products", list);
 			req.setAttribute("rows", map);
 			req.setAttribute("ages", ages);
 			req.setAttribute("cat", cat);
+			req.setAttribute("state", state);
 			
 			// This string array is for us to see what attributes were selected for the initial query
-			String[] queries = new String[3];
+			String[] queries = new String[4];
 			queries[0] = (rows.equals("users.name")) ? "Customers" : "States";
 			queries[1] = (req.getParameter("ages").equals("null") || req.getParameter("ages").equals("0")) ? "All" : req.getParameter("ages");
 			if ( queries[1] != null && !queries[1].equals("null") && !queries[1].equals("All") ) {
@@ -116,6 +111,7 @@ public class SalesServlet extends HttpServlet {
 			     }  
 			   }
 			queries[2] = (req.getParameter("category").equals("null")) ? "All" : req.getParameter("category");
+			queries[3] = (req.getParameter("state").equals("null")) ? "All" : req.getParameter("state");
 			req.setAttribute("next", queries);
 			
 			req.getRequestDispatcher("analytics.jsp").forward(req, res);

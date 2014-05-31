@@ -22,7 +22,17 @@ public class BuyCartServlet extends HttpServlet{
 		HttpSession session = req.getSession(true);
 		HashMap<Product,Integer> map = (HashMap<Product,Integer>)session.getAttribute("cart");
 		
-		if ((map) != null) {
+		int uid = (int)((User)session.getAttribute("currentSessionUser")).getId();
+		List<Order> cart;
+		try {
+			cart = OrderDAO.list(uid);
+			if (cart.size() != 0)
+				req.setAttribute("cart", cart);
+		} catch (SQLException e) {
+			e.printStackTrace();
+			res.sendRedirect("products");
+		}
+		//if ((map) != null) {
 			/*try {
 				List<Product> prods = ProductDAO.list(-1);
 				for (Map.Entry<Product, Integer> entry : map.entrySet()) {
@@ -33,8 +43,8 @@ public class BuyCartServlet extends HttpServlet{
 					
 				}
 			} catch (SQLException e) {}*/
-			session.setAttribute("cart", map);
-		}
+			//session.setAttribute("cart", map);
+		//}
 		req.getRequestDispatcher("buyCart.jsp").forward(req, res);
 	}
 	
@@ -56,13 +66,19 @@ public class BuyCartServlet extends HttpServlet{
 				} else {
 					// Also checks if the string is actually a number
 					Long.parseLong(card);
-					req.setAttribute("Descartes", session.getAttribute("cart"));
-					HashMap<Product,Integer> map = (HashMap<Product,Integer>)session.getAttribute("cart");
+					req.setAttribute("Descartes", req.getAttribute("cart"));
+					int uid = (int)((User)session.getAttribute("currentSessionUser")).getId();
+					List<Order> cart = OrderDAO.list(uid);
+					for (Order l : cart) {
+						SaleDAO.add((long)uid, (long)ProductDAO.find("name", l.getName()).getId(), l.getAmount(), (int)l.getPrice());
+					}
+					/*HashMap<Product,Integer> map = (HashMap<Product,Integer>)session.getAttribute("cart");
 					for (Map.Entry<Product, Integer> cartList : map.entrySet()) {
 						User current = (User)session.getAttribute("currentSessionUser");
 						SaleDAO.add(current.getId(),cartList.getKey().getId(),cartList.getValue(),cartList.getKey().getPrice());
-					}
-					session.setAttribute("cart", null);
+					}*/
+					//session.setAttribute("cart", null);
+					OrderDAO.delete(uid);
 					req.getRequestDispatcher("buyConfirm.jsp").forward(req, res);
 				}
 				

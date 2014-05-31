@@ -17,7 +17,7 @@
 	<div class="title2">Shopping Cart</div>
 	<%@ include file="WEB-INF/cart.jsp" %>
 	
-	<% if ( session.getAttribute("cart") != null ) { %> 
+	<% if ( request.getAttribute("cart") != null ) { %> 
 	<form action="buyCart" method="POST">
 		<div>Enter your credit card number here:</div>
     	<div><input name="cardNumber"/></div>

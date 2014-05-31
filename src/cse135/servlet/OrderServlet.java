@@ -25,23 +25,37 @@ public class OrderServlet extends HttpServlet{
 	protected void doGet (HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
 		HttpSession session = req.getSession(true);
 		
-		HashMap<Product,Integer> map = (HashMap<Product,Integer>)session.getAttribute("cart");
-		if ((map) != null) {
-			/*try {
-				for (Map.Entry<Product, Integer> entry : map.entrySet()) {
-					map.put(ProductDAO.find("id", (int)(entry.getKey().getId())), map.remove(entry.getKey()));
-					
-				}
-			} catch (SQLException e) {}*/
-			session.setAttribute("cart", map);
+		int uid = (int)((User)session.getAttribute("currentSessionUser")).getId();
+		List<Order> cart;
+		try {
+			cart = OrderDAO.list(uid);
+		
+			//HashMap<Product,Integer> map = (HashMap<Product,Integer>)session.getAttribute("cart");
+			if (cart.size() != 0) {
+				/*try {
+					for (Map.Entry<Product, Integer> entry : map.entrySet()) {
+						map.put(ProductDAO.find("id", (int)(entry.getKey().getId())), map.remove(entry.getKey()));
+						
+					}
+				} catch (SQLException e) {}*/
+				//session.setAttribute("cart", map);
+				req.setAttribute("cart", cart);
+				//req.setAttribute("cart", OrderDAO.insert(, pid, quantity, price))
+			}
+		} catch (SQLException e1) {
+			e1.printStackTrace();
+			req.getRequestDispatcher("productOrderError.jsp").forward(req, res);
+			return;
 		}
 			if (req.getParameter("product") != null ) {
-			int sku = Integer.parseInt(req.getParameter("product"));
+			//int sku = Integer.parseInt(req.getParameter("product"));
+				String sku = req.getParameter("product");
 			try {
 				// Find's the product that the customer tries to buy
 				Product p = ProductDAO.find("sku", sku);
 				req.setAttribute("orderProd", p);
 				req.getRequestDispatcher("productOrder.jsp").forward(req, res);
+				return;
 			} catch (SQLException e) {
 				// If an error occurred, redirect
 				e.printStackTrace();
@@ -55,8 +69,10 @@ public class OrderServlet extends HttpServlet{
 	
 	protected void doPost (HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
 		HttpSession session = req.getSession(true);
-		HashMap<Product,Integer> cart = (HashMap<Product,Integer>)session.getAttribute("cart");
+		int uid = (int)((User)session.getAttribute("currentSessionUser")).getId();
+		//HashMap<Product,Integer> cart = (HashMap<Product,Integer>)session.getAttribute("cart");
 		try {
+			//cart = 
 			Integer quantity = Integer.parseInt(req.getParameter("quantity"));
 			if (quantity <= 0) {
 				// Errors if quantity is less than 0
@@ -67,7 +83,8 @@ public class OrderServlet extends HttpServlet{
 			// Don't care about anything else, just need name and price;
 			Product p = new Product(req.getParameter("name"), "0", 0, price);
 			p.setId(id);
-			if (cart == null) { // If there's nothing in the cart, make a new cart
+			OrderDAO.insert(uid, (int)id, quantity, price);
+			/*if (cart == null) { // If there's nothing in the cart, make a new cart
 				cart = new HashMap<Product,Integer>();
 			} 
 			
@@ -79,9 +96,9 @@ public class OrderServlet extends HttpServlet{
 				cart.put(p, quantity);
 			}
 			// Put the cart in the session
-			session.setAttribute("cart", cart);
+			session.setAttribute("cart", cart);*/
 			res.sendRedirect("products");
-		} catch (NumberFormatException e) {
+		} catch (NumberFormatException | SQLException e) {
 			req.getRequestDispatcher("WEB-INF/productOrderError.jsp").forward(req, res);
 		}
 		

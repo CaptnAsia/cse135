@@ -18,7 +18,7 @@
 	<% } else { %>
 Successful purchase. Thank you for shopping with us!
 <div class="title2">What you bought:</div>
-<% cart = (HashMap<Product,Integer>)request.getAttribute("Descartes"); %>
+<% cart = (List<Order>)request.getAttribute("Descartes"); %>
 <%@ include file="WEB-INF/cart.jsp" %><% } %>
 </div>
 </body>

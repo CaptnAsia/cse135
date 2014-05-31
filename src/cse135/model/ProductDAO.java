@@ -12,7 +12,7 @@ public class ProductDAO {
 	
 	/* Find's a product in the products database
 	 */
-	public static Product find(String key, int value) throws SQLException {
+	public static Product find(String key, String value) throws SQLException {
 		PreparedStatement s = null;
 		Product p = new Product();
 
@@ -22,11 +22,7 @@ public class ProductDAO {
 			currentCon = DriverManager.getConnection(dbName);
 			String query = "SELECT * FROM products WHERE " + key + " = ?";// + key + " = " + value;
 			s = currentCon.prepareStatement(query);
-			if (key.equals("sku")) {
-				s.setString(1, "" + value);
-			} else {
-				s.setInt(1, value);
-			}
+			s.setString(1, value);
 			rs = s.executeQuery();
 			
 			if (rs.next()) {
