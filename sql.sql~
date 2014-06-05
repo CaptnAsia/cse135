@@ -62,14 +62,6 @@ CREATE TABLE UserSales (
     sumamt	INTEGER
 );
 
-CREATE TABLE TwoDSales (
-    uid		INTEGER REFERENCES users (id) ON DELETE CASCADE,
-    state	TEXT NOT NULL,
-    pid		INTEGER REFERENCES products (id) ON DELETE CASCADE,
-    category	TEXT NOT NULL,
-    sumamt	INTEGER
-);
-
 INSERT INTO productsales (SELECT products.id, states.state, sum(quantity*sales.price) AS sumamt
 FROM products 
 LEFT JOIN sales ON products.id = pid
@@ -86,11 +78,3 @@ JOIN categories ON cid = categories.id
 GROUP BY users.id, categories.name
 );
 
-INSERT INTO twoDSales (
-SELECT uid, users.state, pid, categories.name as cname, SUM(quantity*sales.price) AS sumamt
-FROM sales
-RIGHT JOIN users ON uid = user.id
-RIGHT JOIN products ON pid = products.id
-JOIN categories on products.cid = categories.id
-group by uid, users.state, pid, categories.name
-);
