@@ -27,120 +27,164 @@ public class SaleDAO {
 		}
 	}
 	
-	public static TreeMap<String, int[]> listProducts( String rows, ArrayList<String> title, int userOffset, 
-			int prodOffset, String ages, String cat, String state) throws SQLException {
+	public static String listProducts( String rows, ArrayList<String> title, ArrayList<Integer> pids,
+			ArrayList<String> rowTitle, String cat, String state) throws SQLException {
 		PreparedStatement s = null;
-		int[] pid = new int[10];
-		// TreeMap because it'll be ordered
-		TreeMap<String, int[]> map = new TreeMap<String, int[]>();
+		boolean categoryFilter =  (cat != null && !cat.equals("null") && !cat.equals("all"));
+		boolean stateFilter = (state != null && !state.equals("null") && !state.equals("All"));
+		String table;
 		try {
 			try {Class.forName("org.postgresql.Driver");} catch (ClassNotFoundException ignore) {}
 			currentCon = DriverManager.getConnection(dbName);
-			boolean category =  cat != null && !cat.equals("null") && !cat.equals("all");
+			
+			
 			// Select the name and id of the products alphabetically, offset (meaning, start after this amount) by prodOffset
-			String query = "SELECT p.name, p.id, sum(s.quantity*s.price) as total FROM (products AS p";//products AS p";
 			
-			if ( category ) {
-				query += (" JOIN categories AS c ON p.cid = c.id");
+			String tempTable = "CREATE TEMPORARY TABLE topProd AS\n";
+			String query;
+			 tempTable += "SELECT p.name, p.id as pid, CASE WHEN SUM(sumamt) IS NULL THEN 0 ELSE SUM(sumamt) END AS total FROM (products AS p LEFT JOIN productsales ON p.id = pid)\n";
+			/*if (stateFilter) {
+				tempTable += "WHERE state = '" + state + "'";
+			}*/
+			if (categoryFilter) {
+				tempTable += " WHERE cid = (SELECT id FROM categories WHERE name = '"+ cat +"')\n";
+				//tempTable += " cid = (SELECT id FROM categories WHERE name = '"+ cat +"')";
 			}
+			tempTable += " GROUP BY p.name, p.id ORDER BY total DESC LIMIT 10";
+			System.out.println("Temp Table: \n" + tempTable+"\n");
+			s = currentCon.prepareStatement(tempTable);
 			
-			query += (") LEFT JOIN sales AS s ON p.id = pid ");
-			if ( category ) {
-				query += "WHERE c.name = '" + cat + "'";
-			}
-			query += " GROUP BY p.name, p.id ORDER BY name ASC LIMIT 10 OFFSET " + prodOffset;
+			s.executeUpdate();
 			
 			
-			System.out.println(query);
+			query = "SELECT name, pid, total from topProd";
+			
+			System.out.println("Products:\n"+query+"\n");
 			s = currentCon.prepareStatement(query);
 			
 			// nanoTime for testing purposes
 			long startTime = System.nanoTime();
 			rs = s.executeQuery();
 			
-			//System.out.println("products: " + (endTime-startTime));
-			
-			/* Already start loading the next query needed for the 2d matrix
-			 * example: SELECT user.name... or SELECT user.state...
-			 */
-			query = "SELECT " + rows + ", SUM(sales.quantity*sales.price) AS total";
 			int i = 0;
-			while(rs.next()) {
-				// basically, get the sum of the money spent by a single person and that's 1 collumn
-				// example looks like 'sum(s1.quantity * s1.price) as q1...'
-				query += ", SUM(s" + i + ".quantity * s" + i + ".price)" + " AS q"+i;
-				
-				// store the product id for use later
-				pid[i] = rs.getInt("id");
-				i++;
-				
-				// add the 
-				title.add(rs.getString("name")+"\n$"+rs.getInt("total"));
+			while (rs.next()) {
+				title.add(rs.getString("name")+"\n($"+rs.getInt("total")+")");
+				pids.add(rs.getInt("pid"));
 			}
 			
-			// Now that we have the attributes we want, specify the tables to look at which is the user that we join with the sales table
-			query += "\nFROM (users \nLEFT JOIN sales ON users.id = sales.uid\n";
 			
-			for (int j = 0; j < i; j++) {
-				/* This line basically means that we should join on the sales table, with the user id the same as the sales.uid
-				 * and the product id equal to the product id we stored earlier.
-				 * example: LEFT JOIN sales AS s1 ON s1.uid = users.id AND s1.pid = 328..."
-				 * Note that every product has its own column, which is why we need these aliases s1, s2....etc
-				 */
-				query += "LEFT JOIN sales AS s" + j + " ON s" + j + ".uid = users.id AND s" + j + ".pid = " + pid[j] + "\n";
-			}
 			
-			/* Now the restrictions:
-			 * first check if the user is a customer
-			 * then group by the attribute selected (either users.name or users.state)
-			 * then order by the attribute seleceted
-			 * And finally limit the query to 20 at a time, offsetting by the given offset
-			 * TODO: add the other query restrictions here...maybe. Not sure
-			 */
-			query += ") WHERE users.role = 'customer'";
+			// Now get the names and totals of the rows of the matrix
+			/* SELECT users.name AS name, users.id AS uid, case when sum(sumamt) is null then 0 else sum(sumamt) end AS total
+FROM (users LEFT JOIN usersales ON users.id = uid and category = 'C10')
 
-			if ( ages != null && !ages.equals("null") && !ages.equals("0") ) {
-				if ( !ages.equals("4") ) {
-					int v1 = 0, v2 = 0;
-					switch ( Integer.parseInt(ages) ) {
-						case 1: v1 = 12; v2 = 18; break;
-						case 2: v1 = 18; v2 = 45; break;
-						case 3: v1 = 45; v2 = 65; break;
-					}
-					query += (" AND users.age BETWEEN " + v1 + " AND " + v2);
-				}
-				else {
-					query += " AND users.age >= 65";
-				}	
+GROUP BY users.name, users.id ORDER BY total DESC LIMIT 20;
+*/
+			// Temp table because we're gonna use this info again later
+			tempTable = "CREATE TEMPORARY TABLE temp AS\n" +
+					"SELECT "+ rows +" AS name, users.id AS uid, CASE WHEN sum(sumamt) IS NULL THEN 0 ELSE SUM(sumamt) END AS total\n" +
+					"FROM (users LEFT JOIN usersales ON users.id = uid\n";//)\n" +
+			if (categoryFilter)
+				tempTable += "AND category = '" + cat + "'\n";
+					//"WHERE sumamt IS NOT NULL \n";
+			tempTable += ")";
+			if (stateFilter)
+				tempTable += " WHERE users.state = '" + state + "'\n";
+			
+			tempTable += "GROUP BY "+rows+", users.id ORDER BY total DESC LIMIT 20";
+			System.out.println("Temp Table: \n" + tempTable+"\n");
+			s = currentCon.prepareStatement(tempTable);
+			s.executeUpdate();
+			
+			// the actual query to get the names and the totals
+			query = "SELECT name, total FROM temp";
+			
+			s = currentCon.prepareStatement(query);
+			System.out.println("Rows:\n"+query+"\n");
+			rs = s.executeQuery();
+			
+			while(rs.next()) {
+				rowTitle.add(rs.getString("name")+"\n($"+rs.getInt("total")+")");
 			}
 			
-			if (state != null && !state.equals("null") && !state.equals("All")) {
-				query += " AND users.state = '" + state + "'";
-			}
 			
-			query += (" GROUP BY " + rows + " ORDER BY " + rows + " ASC");
-			query += (" LIMIT 20 OFFSET " + userOffset);
+			/* Finally get the data for the 2D matrix
+			 */
+			query = "SELECT temp.total as rows, topProd.total as columns, temp.name, sales.pid, SUM(quantity*price) as sum\n" +
+					"FROM temp\n" +
+					"LEFT JOIN sales ON sales.uid = temp.uid AND pid IN (\n" +
+					"SELECT pid FROM topProd)\n" +
+					"LEFT JOIN topProd ON sales.pid = topProd.pid\n" +
+					" GROUP BY temp.name, sales.pid, temp.total, topProd.total ORDER BY temp.total DESC, name ASC, topProd.total DESC";
 			
 			// This is the final query based on everything else
-			System.out.println(query);
+			System.out.println("2D query:\n" + query+"\n");
 			s = currentCon.prepareStatement(query);
 			
 			rs = s.executeQuery();
 			long endTime = System.nanoTime();
-			//System.out.println(""+ (endTime - startTime));
+			System.out.println(""+ (endTime - startTime));
 			
-			while(rs.next()) {
-				int[] value = new int[i];
-				// This is the array for each column in the table, i is the number of products (number of columns) in the table
-				for (int j = 0; j <i; j++) {
-					value[j] = rs.getInt("q"+j);
-				}
-				
-				/* put the int array in the treemap; user name is the key, int array is the value
-				 * have to do rows.indexOf because you need to parse the rows to just name or state
-				 */
-				map.put(rs.getString(rows.substring(rows.indexOf('.')+1))+"\n$"+rs.getInt("total"), value);
+			// Start writing the html for the table
+			table = "<table border=\"1\">\n<tr>\n<th></th>";
+						
+						// Header of the columns: the products to list
+			for (String p : title) {
+				table += "<th>"+p+"</th>\n";
 			}
+			table += "</tr>\n";
+						
+			// get the first element of the set
+			//rs.next();
+				
+			// set up the first user as the currentUser we're on
+			String currentUser = null;
+			if (rs.next())
+				currentUser = rs.getString("name");
+			
+			// Iterate through the rows
+			int count = 1;
+			
+			for (String r : rowTitle) {
+				//System.out.println("currentUser: " + currentUser);
+				System.out.print(rs.getString("name")+ " | ");
+				// boolean set up so when we finish the purchases of one user
+				boolean skip = rs.isAfterLast();
+				// new row
+				table += "<tr>\n<td style=\"font-weight: bold\">"+r+"</td>\n";
+				// Iterate through the top 10 pids
+				for (Integer prod : pids) {
+					table += "<td>$";
+					// If the result set isn't already on the next row or the pid is equal to this cell's pid
+					if (!skip && rs.getInt("pid") == prod) {
+						// populate this cell with the total sales.
+						System.out.print(rs.getString("sum")+" | ");
+						table += "" + rs.getString("sum");
+						boolean isnext = rs.next();
+						count++;
+						//System.out.println("is it still " + currentUser +" ?: " +rs.getString("name"));
+						// then get the next row of the rs.
+						// then check if, by going to the next set, we reached the end of the set
+						// or we finished iterating through this user's purchases
+						if (!isnext || !rs.getString("name").equals(currentUser)) {
+							// if ^ is true, then skip the rest of the products and just populate those cells with 0's
+							skip = true;
+							// change the current user to the next user
+							if (!rs.isAfterLast())
+								currentUser = rs.getString("name");
+						}
+					} else {
+						// if the user didn't buy any of this product, just show 0
+						table += "0";
+					}
+					table += "</td>\n";
+				}
+				System.out.println();
+				table += "</tr>\n";
+			}
+			System.out.println("size of rs: " + count);
+			rs.next();
+			table += "</table>\n";
 			
 		} finally {
 			
@@ -148,7 +192,7 @@ public class SaleDAO {
 			if (s != null) try {s.close();} catch (SQLException ignore) {}
 			if (currentCon != null) try {currentCon.close();} catch (SQLException ignore) {}
 		}
-		
-		return map;
+		return table;
+		//return map;
 	}
 }
