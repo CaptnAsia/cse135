@@ -12,14 +12,16 @@
 </head>
 <body>
 <%@ include file="WEB-INF/header.jsp" %>
-<div class="wrapper" style="padding-top: 10px;">
-	<% if (request.getAttribute("result") != null) {%>
+
+<div class="wrapper" style="padding-top: 5px;">
+<% cart = (List<Order>)request.getAttribute("Descartes"); %>
+	<% if (request.getAttribute("result") != null && cart != null) {%>
 	<%= request.getAttribute("result")%>
 	<% } else { %>
 Successful purchase. Thank you for shopping with us!
 <div class="title2">What you bought:</div>
-<% cart = (List<Order>)request.getAttribute("Descartes"); %>
-<%@ include file="WEB-INF/cart.jsp" %><% } %>
+<%@ include file="WEB-INF/cart.jsp" %>
+<% } %>
 </div>
 </body>
 </html>
