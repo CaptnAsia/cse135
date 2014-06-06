@@ -50,16 +50,29 @@ CREATE TABLE carts (
     price	INTEGER NOT NULL
 );
 
-CREATE TABLE ProductSales (
+CREATE TABLE ProdStatePrecomp (
     pid		INTEGER REFERENCES products (id) ON DELETE CASCADE,
     state	TEXT NOT NULL,
     sumamt	INTEGER
 );
 
-CREATE TABLE UserSales (
+CREATE TABLE UsersCatPrecomp (
     uid		INTEGER REFERENCES users (id) ON DELETE CASCADE,
+    category	TEXT NOT NULL,
+    sumamt	INTEGER
+);
+
+CREATE TABLE StateCatPrecomp (
     state	TEXT NOT NULL,
     category	TEXT NOT NULL,
+    sumamt	INTEGER
+);
+
+CREATE TABLE UsersCatProdStatePrecomp (
+    uid		INTEGER REFERENCES users (id) ON DELETE CASCADE,
+    category	TEXT NOT NULL,
+    pid		INTEGER REFERENCES products (id) ON DELETE CASCADE,
+    state	TEXT NOT NULL,
     sumamt	INTEGER
 );
 
