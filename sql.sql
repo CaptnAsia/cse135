@@ -76,20 +76,6 @@ CREATE TABLE UsersCatProdStatePrecomp (
     sumamt	INTEGER
 );
 
-CREATE TABLE UsersCatProdPrecomp (
-    uid		INTEGER REFERENCES users (id) ON DELETE CASCADE,
-    category	TEXT NOT NULL,
-    pid		INTEGER REFERENCES products (id) ON DELETE CASCADE,
-    sumamt	INTEGER	
-);
-
-CREATE TABLE UsersProdStatePrecomp (
-    uid		INTEGER REFERENCES users (id) ON DELETE CASCADE,
-    pid		INTEGER REFERENCES products (id) ON DELETE CASCADE,
-    state	TEXT NOT NULL,
-    sumamt	INTEGER
-);
-
 CREATE TABLE UsersProdPrecomp (
     uid		INTEGER REFERENCES users (id) ON DELETE CASCADE,
     pid		INTEGER REFERENCES products (id) ON DELETE CASCADE,
