@@ -66,12 +66,12 @@ public class BuyCartServlet extends HttpServlet{
 				} else {
 					// Also checks if the string is actually a number
 					Long.parseLong(card);
-					req.setAttribute("Descartes", req.getAttribute("cart"));
 					int uid = (int)((User)session.getAttribute("currentSessionUser")).getId();
 					List<Order> cart = OrderDAO.list(uid);
 					for (Order l : cart) {
 						SaleDAO.add((long)uid, (long)ProductDAO.find("name", l.getName()).getId(), l.getAmount(), (int)l.getPrice());
 					}
+					req.setAttribute("Descartes", cart);
 					/*HashMap<Product,Integer> map = (HashMap<Product,Integer>)session.getAttribute("cart");
 					for (Map.Entry<Product, Integer> cartList : map.entrySet()) {
 						User current = (User)session.getAttribute("currentSessionUser");

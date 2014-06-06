@@ -20,6 +20,23 @@ public class SaleDAO {
 			s.setInt(3, quantity);
 			s.setInt(4, price);
 			int newId = s.executeUpdate();
+			
+			int sumamt = price * quantity;
+			query = "INSERT INTO UserSales (uid, state, category, sumamt) VALUES (" +
+			        uid + ", " + 
+			        "(SELECT u.state FROM users AS u WHERE u.id = " + uid + "), " + 
+					"(SELECT c.name FROM categories AS c JOIN products AS p ON c.id = p.cid WHERE p.id = " + pid + "), " +
+			        sumamt + ")";
+			s = currentCon.prepareStatement(query);
+			s.executeUpdate();
+
+			query = "INSERT INTO ProductSales (pid, state, sumamt) VALUES ( " +
+					pid + ", " +
+					"(SELECT u.state FROM users AS u WHERE u.id = " + uid + "), " +
+					sumamt + ")";
+			s = currentCon.prepareStatement(query);
+			s.executeUpdate();
+			
 		} finally {
 			if (rs != null) try {rs.close();} catch (SQLException ignore) {}
 			if (s != null) try {s.close();} catch (SQLException ignore) {}

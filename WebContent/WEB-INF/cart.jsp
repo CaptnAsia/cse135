@@ -7,7 +7,6 @@
 			<th>Amt</th>
 			<% for (Order o : cart) {//for (Map.Entry<Product, Integer> cartList : cart.entrySet()) { %>
 			<tr>
-				
 				<td class="name"><%= o.getName()%></td>
 				<td class="price">$<%=o.getPrice()%></td>
 				<td class="quantity"><%=o.getAmount()%></td>
