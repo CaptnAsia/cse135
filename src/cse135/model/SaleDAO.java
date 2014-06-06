@@ -21,6 +21,7 @@ public class SaleDAO {
 			s.setInt(4, price);
 			int newId = s.executeUpdate();
 			
+			System.out.println("boop");
 			int sumamt = price * quantity;
 			query = "INSERT INTO UserSales (uid, state, category, sumamt) VALUES (" +
 			        uid + ", " + 
