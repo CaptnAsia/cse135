@@ -58,6 +58,7 @@ CREATE TABLE ProductSales (
 
 CREATE TABLE UserSales (
     uid		INTEGER REFERENCES users (id) ON DELETE CASCADE,
+    state	TEXT NOT NULL,
     category	TEXT NOT NULL,
     sumamt	INTEGER
 );
