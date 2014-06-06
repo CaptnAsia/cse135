@@ -23,27 +23,126 @@ public class SaleDAO {
 			
 			String state = "(SELECT u.state FROM users AS u WHERE u.id = " + uid + ")";
 			String category = "(SELECT c.name FROM categories AS c JOIN products AS p ON c.id = p.cid WHERE p.id = " + pid + ")";
-			int sumamt = price * quantity;	
+			int sumamt = price * quantity;
+			String pTable = "";
+			String condition = "";
+			String oldSumamt = "";
 			
-			query = "INSERT INTO ProdStatePrecomp (pid, state, sumamt) VALUES (" +
-					pid + ", " + state + ", " + sumamt + ")";
+			System.out.println("\nPrecomputed Table Queries:");
+			
+			// ProdStatePrecomp (pid, state, sumamt)
+			pTable = "ProdStatePrecomp";
+			condition = " WHERE pid = " + pid + " AND state = " + state;
+			oldSumamt = "(SELECT sumamt FROM " + pTable + condition + ")";
+			
+			query = "SELECT * FROM " + pTable + condition;
+			s = currentCon.prepareStatement(query);
+			rs = s.executeQuery();
+			
+			query = (rs.next()) ?
+					("UPDATE " + pTable + " SET sumamt = " + sumamt + " + " + oldSumamt + condition) :
+			        ("INSERT INTO " + pTable + " (pid, state, sumamt) VALUES (" + pid + ", " + state + ", " + sumamt + ")");
+			System.out.println(query);
 			s = currentCon.prepareStatement(query);
 			s.executeUpdate();
 			
-			query = "INSERT INTO UsersCatPrecomp (uid, category, sumamt) VALUES (" +
-					uid + ", " + category + ", " + sumamt + ")";
+			// UsersCatPrecomp (uid, category, sumamt)
+			pTable = "UsersCatPrecomp";
+			condition = " WHERE uid = " + uid + " AND category = " + category;
+			oldSumamt = "(SELECT sumamt FROM " + pTable + condition + ")";
+			
+			query = "SELECT * FROM " + pTable + condition;
+			s = currentCon.prepareStatement(query);
+			rs = s.executeQuery();
+			
+			query = (rs.next()) ?
+					("UPDATE " + pTable + " SET sumamt = " + sumamt + " + " + oldSumamt + condition) :
+					("INSERT INTO " + pTable + " (uid, category, sumamt) VALUES (" + uid + ", " + category + ", " + sumamt + ")");
+			System.out.println(query);
 			s = currentCon.prepareStatement(query);
 			s.executeUpdate();
 			
-			query = "INSERT INTO StateCatPrecomp (state, category, sumamt) VALUES (" +
-					state + ", " + category + ", " + sumamt + ")";		
+			// StateCatPrecomp (state, category, sumamt)
+			pTable = "StateCatPrecomp";
+			condition = " WHERE state = " + state + " AND category = " + category;
+			oldSumamt = "(SELECT sumamt FROM " + pTable + condition + ")";
+			
+			query = "SELECT * FROM " + pTable + condition;
+			s = currentCon.prepareStatement(query);
+			rs = s.executeQuery();
+			
+			query = (rs.next()) ?
+					("UPDATE " + pTable + " SET sumamt = " + sumamt + " + " + oldSumamt + condition) :
+					("INSERT INTO " + pTable + " (state, category, sumamt) VALUES (" + state + ", " + category + ", " + sumamt + ")");	
+			System.out.println(query);
 			s = currentCon.prepareStatement(query);
 			s.executeUpdate();
-					
-			query = "INSERT INTO UsersCatProdStatePrecomp (uid, category, pid, state, sumamt) VALUES (" +
-					uid + ", " + category + ", " + pid + ", " + state + ", " + sumamt + ")";
+			
+			//UsersCatProdStatePrecomp (uid, category, pid, state, sumamt)
+			pTable = "UsersCatProdStatePrecomp";
+			condition = " WHERE uid = " + uid + " AND category = " + category + " AND pid = " + pid + " AND state = " + state;
+			oldSumamt = "(SELECT sumamt FROM " + pTable + condition + ")";
+			
+			query = "SELECT * FROM " + pTable + condition;
+			s = currentCon.prepareStatement(query);
+			rs = s.executeQuery();
+			
+			query = (rs.next()) ?
+					("UPDATE " + pTable + " SET sumamt = " + sumamt + " + " + oldSumamt + condition) :
+					("INSERT INTO " + pTable + " (uid, category, pid, state, sumamt) VALUES (" + uid + ", " + category + ", " + pid + ", " + state + ", " + sumamt + ")");
+			System.out.println(query);
 			s = currentCon.prepareStatement(query);
 			s.executeUpdate();
+			
+			// UsersPrecomp (uid, sumamt)
+			pTable = "UsersPrecomp";
+			condition = " WHERE uid = " + uid;
+			oldSumamt = "(SELECT sumamt FROM " + pTable + condition + ")";
+			
+			query = "SELECT * FROM " + pTable + condition;
+			s = currentCon.prepareStatement(query);
+			rs = s.executeQuery();
+			
+			query = (rs.next()) ?
+					("UPDATE " + pTable + " SET sumamt = " + sumamt + " + " + oldSumamt + condition) :
+					("INSERT INTO " + pTable + " (uid, sumamt) VALUES (" + uid + ", " + sumamt + ")");
+			System.out.println(query);
+			s = currentCon.prepareStatement(query);
+			s.executeUpdate();
+			
+			// ProdPrecomp (pid, sumamt)
+			pTable = "ProdPrecomp";
+			condition = " WHERE pid = " + pid;
+			oldSumamt = "(SELECT sumamt FROM " + pTable + condition + ")";
+			
+			query = "SELECT * FROM " + pTable + condition;
+			s = currentCon.prepareStatement(query);
+			rs = s.executeQuery();
+			
+			query = (rs.next()) ?
+					("UPDATE " + pTable + " SET sumamt = " + sumamt + " + " + oldSumamt + condition) :
+					("INSERT INTO " + pTable + " (pid, sumamt) VALUES (" + pid + ", " + sumamt + ")");
+			System.out.println(query);
+			s = currentCon.prepareStatement(query);
+			s.executeUpdate();
+			
+			// StatesPrecomp (state, sumamt)
+			pTable = "StatesPrecomp";
+			condition = " WHERE state = " + state;
+			oldSumamt = "(SELECT sumamt FROM " + pTable + condition + ")";
+			
+			query = "SELECT * FROM " + pTable + condition;
+			s = currentCon.prepareStatement(query);
+			rs = s.executeQuery();
+			
+			query = (rs.next()) ?
+					("UPDATE " + pTable + " SET sumamt = " + sumamt + " + " + oldSumamt + condition) :
+					("INSERT INTO " + pTable + " (state, sumamt) VALUES (" + state + ", " + sumamt + ")");
+			System.out.println(query);
+			s = currentCon.prepareStatement(query);
+			s.executeUpdate();
+			
+			System.out.println();
 			
 		} finally {
 			if (rs != null) try {rs.close();} catch (SQLException ignore) {}
