@@ -67,9 +67,10 @@ public class SaleDAO {
 			
 			String tempTable = "CREATE TEMPORARY TABLE topProd AS\n";
 			String query;
+			String tableName = stateFilter ? "prodstateprecomp" : "prodprecomp";
 			//String sumamt = (stateFilter) ? "sumamt" : "SUM(sumamt)";
 			 tempTable += "SELECT p.name, p.id as pid, CASE WHEN SUM(sumamt) IS NULL THEN 0 ELSE SUM(sumamt) END" +
-			 		" AS total FROM (products AS p LEFT JOIN prodstateprecomp ON p.id = pid\n";
+			 		" AS total FROM (products AS p LEFT JOIN "+tableName+" ON p.id = pid\n";
 			if (stateFilter) {
 				tempTable += "AND state = '" + state + "'";
 			}
@@ -113,19 +114,25 @@ GROUP BY users.name, users.id ORDER BY total DESC LIMIT 20;
 			String name;
 			String orderby;
 			String twoD;
+			String joinCond;
 			if (rows.equals("users.state")) {
 				name = "users.state AS name,";
 				orderby = "users.state";
 				twoD = ".state = temp.name\n";
+				
+				tableName = categoryFilter ? "statecatprecomp" : "statesprecomp";
+				joinCond = "users.state = " + tableName + ".state";
 			} else {
 				name = "users.name AS name, users.id AS uid,";
 				orderby = "users.name, users.id";
 				twoD = ".uid = temp.uid\n";
+				tableName = categoryFilter ? "userscatprecomp" : "usersprecomp";
+				joinCond = "users.id = uid";
 			}
-			//sumamt = categoryFilter ? "sumamt" : "SUM(sumamt)";
+			//tableName = categoryFilter ? "userscatprecomp" : "usersprecomp";
 			tempTable = "CREATE TEMPORARY TABLE temp AS\n" +
 					"SELECT "+ name +" CASE WHEN SUM(sumamt) IS NULL THEN 0 ELSE SUM(sumamt) END AS total\n" +
-					"FROM (users LEFT JOIN userscatprecomp ON users.id = uid\n";//)\n" +
+					"FROM (users LEFT JOIN "+tableName+" ON "+joinCond+"\n";//)\n" +
 			if (categoryFilter)
 				tempTable += "AND category = '" + cat + "'\n";
 			tempTable += ")";
@@ -146,7 +153,7 @@ GROUP BY users.name, users.id ORDER BY total DESC LIMIT 20;
 			rs = s.executeQuery();
 			
 			while(rs.next()) {
-				rowTitle.add(rs.getString("name")+"\n($"+rs.getInt("total")+")");
+				rowTitle.add(rs.getString("name")+"\n($"+rs.getLong("total")+")");
 			}
 			
 			
@@ -203,7 +210,7 @@ GROUP BY users.name, users.id ORDER BY total DESC LIMIT 20;
 			
 			for (String r : rowTitle) {
 				// boolean set up so when we finish the purchases of one user
-				System.out.print(currentUser+ " | ");
+				//System.out.print(currentUser+ " | ");
 				boolean skip = rs.isAfterLast();
 				// new row
 				table += "<tr>\n<td style=\"font-weight: bold\">"+r+"</td>\n";

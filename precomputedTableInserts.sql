@@ -33,3 +33,25 @@ JOIN products ON pid = products.id
 JOIN categories ON cid = categories.id
 GROUP BY users.id, products.id, categories.name, users.state
 );
+
+INSERT INTO UsersPrecomp (
+SELECT users.id, SUM(quantity*sales.price) AS sumamt
+FROM users
+LEFT JOIN sales ON users.id = uid
+GROUP BY users.id
+);
+
+INSERT INTO StatesPrecomp (
+SELECT users.state, SUM(quantity*sales.price) AS sumamt
+FROM users
+LEFT JOIN sales ON users.id = uid
+GROUP BY users.state
+);
+
+INSERT INTO ProdPrecomp (
+SELECT products.id, SUM(quantity*sales.price) AS sumamt
+FROM products
+LEFT JOIN sales ON products.id = pid
+GROUP BY products.id
+);
+
