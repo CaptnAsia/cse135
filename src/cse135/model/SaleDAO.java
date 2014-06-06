@@ -21,20 +21,27 @@ public class SaleDAO {
 			s.setInt(4, price);
 			int newId = s.executeUpdate();
 			
-			System.out.println("boop");
-			int sumamt = price * quantity;
-			query = "INSERT INTO UserSales (uid, state, category, sumamt) VALUES (" +
-			        uid + ", " + 
-			        "(SELECT u.state FROM users AS u WHERE u.id = " + uid + "), " + 
-					"(SELECT c.name FROM categories AS c JOIN products AS p ON c.id = p.cid WHERE p.id = " + pid + "), " +
-			        sumamt + ")";
+			String state = "(SELECT u.state FROM users AS u WHERE u.id = " + uid + ")";
+			String category = "(SELECT c.name FROM categories AS c JOIN products AS p ON c.id = p.cid WHERE p.id = " + pid + ")";
+			int sumamt = price * quantity;	
+			
+			query = "INSERT INTO ProdStatePrecomp (pid, state, sumamt) VALUES (" +
+					pid + ", " + state + ", " + sumamt + ")";
 			s = currentCon.prepareStatement(query);
 			s.executeUpdate();
-
-			query = "INSERT INTO ProductSales (pid, state, sumamt) VALUES ( " +
-					pid + ", " +
-					"(SELECT u.state FROM users AS u WHERE u.id = " + uid + "), " +
-					sumamt + ")";
+			
+			query = "INSERT INTO UsersCatPrecomp (uid, category, sumamt) VALUES (" +
+					uid + ", " + category + ", " + sumamt + ")";
+			s = currentCon.prepareStatement(query);
+			s.executeUpdate();
+			
+			query = "INSERT INTO StateCatPrecomp (state, category, sumamt) VALUES (" +
+					state + ", " + category + ", " + sumamt + ")";		
+			s = currentCon.prepareStatement(query);
+			s.executeUpdate();
+					
+			query = "INSERT INTO UsersCatProdStatePrecomp (uid, category, pid, state, sumamt) VALUES (" +
+					uid + ", " + category + ", " + pid + ", " + state + ", " + sumamt + ")";
 			s = currentCon.prepareStatement(query);
 			s.executeUpdate();
 			
