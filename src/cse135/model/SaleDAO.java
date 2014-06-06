@@ -42,10 +42,12 @@ public class SaleDAO {
 			
 			String tempTable = "CREATE TEMPORARY TABLE topProd AS\n";
 			String query;
-			 tempTable += "SELECT p.name, p.id as pid, CASE WHEN SUM(sumamt) IS NULL THEN 0 ELSE SUM(sumamt) END AS total FROM (products AS p LEFT JOIN productsales ON p.id = pid)\n";
-			/*if (stateFilter) {
-				tempTable += "WHERE state = '" + state + "'";
-			}*/
+			 tempTable += "SELECT p.name, p.id as pid, CASE WHEN SUM(sumamt) IS NULL THEN 0 ELSE SUM(sumamt) END" +
+			 		" AS total FROM (products AS p LEFT JOIN productsales ON p.id = pid\n";
+			if (stateFilter) {
+				tempTable += "AND state = '" + state + "'";
+			}
+			tempTable += ")\n";
 			if (categoryFilter) {
 				tempTable += " WHERE cid = (SELECT id FROM categories WHERE name = '"+ cat +"')\n";
 				//tempTable += " cid = (SELECT id FROM categories WHERE name = '"+ cat +"')";
@@ -53,7 +55,7 @@ public class SaleDAO {
 			tempTable += " GROUP BY p.name, p.id ORDER BY total DESC LIMIT 10";
 			System.out.println("Temp Table: \n" + tempTable+"\n");
 			s = currentCon.prepareStatement(tempTable);
-			
+			long startTime = System.nanoTime();
 			s.executeUpdate();
 			
 			
@@ -63,7 +65,7 @@ public class SaleDAO {
 			s = currentCon.prepareStatement(query);
 			
 			// nanoTime for testing purposes
-			long startTime = System.nanoTime();
+			
 			rs = s.executeQuery();
 			
 			int i = 0;
@@ -81,8 +83,20 @@ FROM (users LEFT JOIN usersales ON users.id = uid and category = 'C10')
 GROUP BY users.name, users.id ORDER BY total DESC LIMIT 20;
 */
 			// Temp table because we're gonna use this info again later
+			String name;
+			String orderby;
+			String twoD;
+			if (rows.equals("users.state")) {
+				name = "users.state AS name,";
+				orderby = "users.state";
+				twoD = "sales.uid = users.id\n";
+			} else {
+				name = "users.name AS name, users.id AS uid,";
+				orderby = "users.name, users.id";
+				twoD = "sales.uid = temp.uid\n";
+			}
 			tempTable = "CREATE TEMPORARY TABLE temp AS\n" +
-					"SELECT "+ rows +" AS name, users.id AS uid, CASE WHEN sum(sumamt) IS NULL THEN 0 ELSE SUM(sumamt) END AS total\n" +
+					"SELECT "+ name +" CASE WHEN sum(sumamt) IS NULL THEN 0 ELSE SUM(sumamt) END AS total\n" +
 					"FROM (users LEFT JOIN usersales ON users.id = uid\n";//)\n" +
 			if (categoryFilter)
 				tempTable += "AND category = '" + cat + "'\n";
@@ -91,7 +105,7 @@ GROUP BY users.name, users.id ORDER BY total DESC LIMIT 20;
 			if (stateFilter)
 				tempTable += " WHERE users.state = '" + state + "'\n";
 			
-			tempTable += "GROUP BY "+rows+", users.id ORDER BY total DESC LIMIT 20";
+			tempTable += "GROUP BY "+orderby+" ORDER BY total DESC LIMIT 20";
 			System.out.println("Temp Table: \n" + tempTable+"\n");
 			s = currentCon.prepareStatement(tempTable);
 			s.executeUpdate();
@@ -100,7 +114,7 @@ GROUP BY users.name, users.id ORDER BY total DESC LIMIT 20;
 			query = "SELECT name, total FROM temp";
 			
 			s = currentCon.prepareStatement(query);
-			System.out.println("Rows:\n"+query+"\n");
+			//System.out.println("Rows:\n"+query+"\n");
 			rs = s.executeQuery();
 			
 			while(rs.next()) {
@@ -111,17 +125,20 @@ GROUP BY users.name, users.id ORDER BY total DESC LIMIT 20;
 			/* Finally get the data for the 2D matrix
 			 */
 			query = "SELECT temp.total as rows, topProd.total as columns, temp.name, sales.pid, SUM(quantity*price) as sum\n" +
-					"FROM temp\n" +
-					"LEFT JOIN sales ON sales.uid = temp.uid AND pid IN (\n" +
+					"FROM temp\n";// +
+			if(rows.equals("users.state"))
+				query += "LEFT JOIN users ON temp.name = users.state AND users.state IN (SELECT name FROM temp)\n";
+			query +="LEFT JOIN sales ON "+twoD+" AND pid IN (\n" +
 					"SELECT pid FROM topProd)\n" +
-					"LEFT JOIN topProd ON sales.pid = topProd.pid\n" +
-					" GROUP BY temp.name, sales.pid, temp.total, topProd.total ORDER BY temp.total DESC, name ASC, topProd.total DESC";
+					"LEFT JOIN topProd ON sales.pid = topProd.pid\n" +//
+					"WHERE sales.pid IS NOT NULL GROUP BY temp.name, sales.pid, temp.total, topProd.total ORDER BY temp.total DESC, name ASC, topProd.total DESC";
 			
 			// This is the final query based on everything else
 			System.out.println("2D query:\n" + query+"\n");
 			s = currentCon.prepareStatement(query);
 			
 			rs = s.executeQuery();
+			
 			long endTime = System.nanoTime();
 			System.out.println(""+ (endTime - startTime));
 			
@@ -143,11 +160,8 @@ GROUP BY users.name, users.id ORDER BY total DESC LIMIT 20;
 				currentUser = rs.getString("name");
 			
 			// Iterate through the rows
-			int count = 1;
 			
 			for (String r : rowTitle) {
-				//System.out.println("currentUser: " + currentUser);
-				System.out.print(rs.getString("name")+ " | ");
 				// boolean set up so when we finish the purchases of one user
 				boolean skip = rs.isAfterLast();
 				// new row
@@ -158,11 +172,8 @@ GROUP BY users.name, users.id ORDER BY total DESC LIMIT 20;
 					// If the result set isn't already on the next row or the pid is equal to this cell's pid
 					if (!skip && rs.getInt("pid") == prod) {
 						// populate this cell with the total sales.
-						System.out.print(rs.getString("sum")+" | ");
 						table += "" + rs.getString("sum");
 						boolean isnext = rs.next();
-						count++;
-						//System.out.println("is it still " + currentUser +" ?: " +rs.getString("name"));
 						// then get the next row of the rs.
 						// then check if, by going to the next set, we reached the end of the set
 						// or we finished iterating through this user's purchases
@@ -179,10 +190,8 @@ GROUP BY users.name, users.id ORDER BY total DESC LIMIT 20;
 					}
 					table += "</td>\n";
 				}
-				System.out.println();
 				table += "</tr>\n";
 			}
-			System.out.println("size of rs: " + count);
 			rs.next();
 			table += "</table>\n";
 			
