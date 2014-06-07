@@ -16,15 +16,7 @@ import cse135.model.SaleDAO;
 
 public class SalesServlet extends HttpServlet {
 	protected void doGet (HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
-		
-		//TreeMap<String,int[]> map;
-		ResultSet rs;
-		ArrayList<String> list = new ArrayList<String>();
-		ArrayList<String> rowTitle = new ArrayList<String>();
-		ArrayList<Integer> pids = new ArrayList<Integer>();
-		String table;// = new String();
-		//String rowOffset = req.getParameter("rowRange");
-		
+		String table;
 		try {
 			List<Category> categories = (List<Category>)CategoryDAO.list();
 			req.setAttribute("categories", categories);
@@ -41,78 +33,9 @@ public class SalesServlet extends HttpServlet {
 				return;
 			}
 			
-			table = SaleDAO.listProducts(rows, list, pids, rowTitle, cat, states);
-			//System.out.println(table);
-			/*// Start writing the html for the table
-			table = "<table border=\"1\">\n<tr>\n<th></th>";
-			
-			// Header of the columns: the products to list
-			for (String p : list) {
-				table += "<th>"+p+"</th>\n";
-			}
-			table += "</tr>\n";
-			
-			// get the first element of the set
-			rs.next();
-			
-			// set up the first user as the currentUser we're on
-			String currentUser = rs.getString("name");
-			
-			// Iterate through the rows
-			for (String r : rowTitle) {
-				// boolean set up so when we finish the purchases of one user
-				boolean skip = false;
-				// new row
-				table += "<tr>\n<td style=\"font-weight: bold\">"+r+"</td>/n";
-				// Iterate through the top 10 pids
-				for (Integer i : pids) {
-					table += "<td>$";
-					// If the result set isn't already on the next row or the pid is equal to this cell's pid
-					if (!skip && rs.getInt("pid") == i) {
-						// populate this cell with the total sales.
-						table += "" + rs.getString("sum");
-						// then get the next row of the rs.
-						rs.next();
-						// then check if, by going to the next set, we reached the end of the set
-						// or we finished iterating through this user's purchases
-						if (rs.getString("name") == null || !rs.getString("name").equals(currentUser)) {
-							// if ^ is true, then skip the rest of the products and just populate those cells with 0's
-							skip = true;
-							// change the current user to the next user
-							currentUser = rs.getString("name");
-						}
-					} else {
-						// if the user didn't buy any of this product, just show 0
-						table += "0";
-					}
-					table += "</td>\n";
-				}
-				table += "</tr>\n";
-			}
-			rs.close();
-			table += "</table>\n";*/
-			
-			/* <table border="1">
-	<tr>
-		<th></th>
-	<% for (String p : products) { %>
-		<th><%=p %></th>
-	<%} %>
-	</tr>
-	<% for (Map.Entry<String, int[]> row : map.entrySet()) { %>
-	<tr>
-		<td style="font-weight: bold"><%=row.getKey() %></td>
-		<% for (int i = 0; i < row.getValue().length; i++) { %>
-		<td>$<%=row.getValue()[i] %></td> <%} %>
-	</tr><%} %>
-</table>*/
+			table = SaleDAO.listProducts(rows, cat, states);
 			
 			req.setAttribute("table", table);
-			/**TODO: SET THE TABLE TO A ATTTRIBUTE AND CHANGE THE ANALYTICS PAGE
-			 */
-			
-			
-			req.setAttribute("products", list);
 			req.setAttribute("rows", rows);
 			req.setAttribute("cat", cat);
 			req.getRequestDispatcher("analytics.jsp").forward(req, res);

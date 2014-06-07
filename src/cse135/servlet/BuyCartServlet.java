@@ -4,6 +4,7 @@ import cse135.model.*;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
@@ -67,7 +68,7 @@ public class BuyCartServlet extends HttpServlet{
 					// Also checks if the string is actually a number
 					Long.parseLong(card);
 					int uid = (int)((User)session.getAttribute("currentSessionUser")).getId();
-					List<Order> cart = OrderDAO.list(uid);
+					List<Order> cart = new ArrayList<Order>(OrderDAO.list(uid));
 					for (Order l : cart) {
 						SaleDAO.add((long)uid, (long)ProductDAO.find("name", l.getName()).getId(), l.getAmount(), (int)l.getPrice());
 					}

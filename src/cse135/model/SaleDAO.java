@@ -151,11 +151,13 @@ public class SaleDAO {
 		}
 	}
 	
-	public static String listProducts( String rows, ArrayList<String> title, ArrayList<Integer> pids,
-			ArrayList<String> rowTitle, String cat, String state) throws SQLException {
+	public static String listProducts(String rows, String cat, String state) throws SQLException {
 		PreparedStatement s = null;
-		boolean categoryFilter =  (cat != null && !cat.equals("null") && !cat.equals("all"));
-		boolean stateFilter = (state != null && !state.equals("null") && !state.equals("All"));
+		ArrayList<String> title = new ArrayList<String>(); // the headers for the columns
+		ArrayList<Integer> pids = new ArrayList<Integer>(); // product ids corresponding with the columns
+		ArrayList<String> rowTitle = new ArrayList<String>(); // Users or States on the left most column
+		boolean categoryFilter =  (cat != null && !cat.equals("null") && !cat.equals("all")); // Check if there's a category filter
+		boolean stateFilter = (state != null && !state.equals("null") && !state.equals("All")); // Check if there's a state filter
 		String table;
 		try {
 			try {Class.forName("org.postgresql.Driver");} catch (ClassNotFoundException ignore) {}
@@ -164,6 +166,27 @@ public class SaleDAO {
 			
 			// Select the name and id of the products alphabetically, offset (meaning, start after this amount) by prodOffset
 			
+			/* Create a temp table to get the top 10 products based on total sales of the product from our precomputed tables
+			 * if there's a state filter, select from the ProdStatePrecomp table, if not then select from the ProdPrecomp table
+			 * 
+			 * SELECT p.name, p.id as pid, case when sum(sumamt) is null then 0 else sum(sumamt) end AS total
+			 * ^ This means select the product's name, id, and the total sales (sumamt) for each of the products.
+			 * 		The case statements means that if there's no sales for a product then just put in 0, since we do a left join later
+			 * 
+			 * FROM (products AS p LEFT JOIN <tableName> ON p.id = pid
+			 * select these things from the products table left join (meaning all elements of products are included) the precomputed table
+			 * 
+			 * AND state = '<state>'
+			 * If there's a state filter include this inside the join because we still want to see all the products.
+			 * 		If we did a where state = state clause outside of the ")" then it would filter out a lot of products, that we want to see
+			 * 
+			 * ) WHERE cid = (SELECT id FROM categories WHERE name = <cat>)
+			 * If theres a category filter then filter out all the sales where the category is cat
+			 * 		We select the cid of the cat based on the name that's passed into the query
+			 * 
+			 * GROUP BY p.name, p.id ORDER BY total DESC LIMIT 10
+			 * group by the p.name and order by total desc (most sales to least sales)
+			 */
 			String tempTable = "CREATE TEMPORARY TABLE topProd AS\n";
 			String query;
 			String tableName = stateFilter ? "prodstateprecomp" : "prodprecomp";
@@ -180,19 +203,16 @@ public class SaleDAO {
 			}
 			tempTable += " GROUP BY p.name, p.id";
 			tempTable += "\nORDER BY total DESC LIMIT 10";
-			System.out.println("Temp Table: \n" + tempTable+"\n");
+			//System.out.println("Temp Table: \n" + tempTable+"\n");
 			s = currentCon.prepareStatement(tempTable);
 			long startTime = System.nanoTime();
 			s.executeUpdate();
 			
-			
+			// Query to get the products
 			query = "SELECT name, pid, total from topProd";
 			
-			System.out.println("Products:\n"+query+"\n");
+			//System.out.println("Products:\n"+query+"\n");
 			s = currentCon.prepareStatement(query);
-			
-			// nanoTime for testing purposes
-			
 			rs = s.executeQuery();
 			
 			int i = 0;
@@ -205,10 +225,9 @@ public class SaleDAO {
 			
 			// Now get the names and totals of the rows of the matrix
 			/* SELECT users.name AS name, users.id AS uid, case when sum(sumamt) is null then 0 else sum(sumamt) end AS total
-FROM (users LEFT JOIN usersales ON users.id = uid and category = 'C10')
-
-GROUP BY users.name, users.id ORDER BY total DESC LIMIT 20;
-*/
+			 * FROM (users LEFT JOIN <precompTable> ON users.id = uid and category = 'C10')
+			 * GROUP BY users.name, users.id ORDER BY total DESC LIMIT 20;
+			 */
 			// Temp table because we're gonna use this info again later
 			String name;
 			String orderby;
@@ -240,7 +259,7 @@ GROUP BY users.name, users.id ORDER BY total DESC LIMIT 20;
 			
 			tempTable += "GROUP BY "+orderby;
 			tempTable += "\nORDER BY total DESC LIMIT 20";
-			System.out.println("Temp Table: \n" + tempTable+"\n");
+			//System.out.println("Temp Table: \n" + tempTable+"\n");
 			s = currentCon.prepareStatement(tempTable);
 			s.executeUpdate();
 			
@@ -257,8 +276,36 @@ GROUP BY users.name, users.id ORDER BY total DESC LIMIT 20;
 			
 			
 			/* Finally get the data for the 2D matrix
+			 * SELECT temp.total as rows, topProd.total as columns, temp.name, UsersCatProdStatePrecomp.pid, SUM(sumamt) as sum
+			 * Select the total from the rows temp table, total from the products temp table for sorting later
+			 * 		Also select temp.name (which could be users.state or users.name) and the pid from the userscatprodstate precomp table
+			 * 		userscatprodstate precomp table used to easily compute the cells of the 2d matrix
+			 * 
+			 * FROM temp
+			 * LEFT JOIN UsersCatProdStatePrecomp ON UsersCatProdStatePrecomp.uid = temp.uid
+			 * AND pid IN (
+			 * SELECT pid FROM topProd)
+			 * 
+			 * Select these things from the temp table, left join on the precomp table where the uids are equal and the pid is in the topProd table
+			 * 
+			 * LEFT JOIN topProd ON UsersCatProdStatePrecomp.pid = topProd.pid
+			 * Then join on the topProd table wher the pids are equal of the precomputed and the topprod table
+			 * 
+			 * WHERE UsersCatProdStatePrecomp.pid IS NOT NULL
+			 * Make sure the pid is not null, I was getting an error for some reason for this before
+			 * 
+			 * AND UsersCatProdStatePrecomp.category = 'C14'
+			 * Filters
+			 * 
+			 * GROUP BY temp.name, USersCatProdStatePrecomp.pid, temp.total, topProd.total
+			 * Group by temp.name first, then precomptable, then the totals
+			 * 
+			 * ORDER BY temp.total DESC, name ASC, topProd.total DESC
+			 * Since we're going to iterate through the query by the rows, first sort by temp.total, then
+			 * in the case where the temp.totals are equal, sort by the names sot hey don't get mixed together,
+			 * and then finally sort by topProd totals, so that they follow the order of rows from most to least sales, and
+			 * follow the order of products from most bought to least bought.
 			 */
-			//sumamt = (stateFilter && categoryFilter) ? "sumamt" : "SUM(sumamt)";
 			query = "SELECT temp.total as rows, topProd.total as columns, temp.name, UsersCatProdStatePrecomp.pid, " +
 						"SUM(sumamt) as sum\n" +
 					"FROM temp\n" +
@@ -272,13 +319,7 @@ GROUP BY users.name, users.id ORDER BY total DESC LIMIT 20;
 				query += "AND UsersCatProdStatePrecomp.category = '" + cat + "'\n";
 			query += "GROUP BY temp.name, USersCatProdStatePrecomp.pid, temp.total, topProd.total" +
 					 "\nORDER BY temp.total DESC, name ASC, topProd.total DESC";// +
-			/*if(rows.equals("users.state"))
-				query += "LEFT JOIN users ON temp.name = users.state AND users.state IN (SELECT name FROM temp)\n";*/
-			/*query +="LEFT JOIN sales ON "+twoD+" AND pid IN (\n" +
-					"SELECT pid FROM topProd)\n" +
-					"LEFT JOIN topProd ON sales.pid = topProd.pid\n" +//
-					"WHERE sales.pid IS NOT NULL GROUP BY temp.name, sales.pid, temp.total, topProd.total ORDER BY temp.total DESC, name ASC, topProd.total DESC";
-			*/
+			
 			// This is the final query based on everything else
 			System.out.println("2D query:\n" + query+"\n");
 			s = currentCon.prepareStatement(query);
@@ -288,28 +329,26 @@ GROUP BY users.name, users.id ORDER BY total DESC LIMIT 20;
 			long endTime = System.nanoTime();
 			System.out.println(""+ (endTime - startTime));
 			
-			// Start writing the html for the table
+			/* Decided to just write the html to print in here, so that I don't have to go through all these <%%> tags
+			 * everywhere throughout the jsp file. Basically makes the jsp file more pretty.
+			 * 
+			 */
 			table = "<table border=\"1\">\n<tr>\n<th></th>";
 						
-						// Header of the columns: the products to list
+			// Iterate through the products list and put them at the top of the columns of the formatted table
 			for (String p : title) {
 				table += "<th>"+p+"</th>\n";
 			}
 			table += "</tr>\n";
-						
-			// get the first element of the set
-			//rs.next();
 				
 			// set up the first user as the currentUser we're on
 			String currentUser = null;
-			if (rs.next())
+			if (rs.next()) // If the query actually worked and we have things in the rs then set the current user to it
 				currentUser = rs.getString("name");
 			
-			// Iterate through the rows
-			
+			// Iterate through the rows (users or states) list
 			for (String r : rowTitle) {
 				// boolean set up so when we finish the purchases of one user
-				//System.out.print(currentUser+ " | ");
 				boolean skip = rs.isAfterLast();
 				// new row
 				table += "<tr>\n<td style=\"font-weight: bold\">"+r+"</td>\n";
@@ -337,6 +376,8 @@ GROUP BY users.name, users.id ORDER BY total DESC LIMIT 20;
 					}
 					table += "</td>\n";
 				}
+				// If this particular row did not buy any of the top ten products, then we have to
+				// increase the result set anyway, so this is just a fail safe of that
 				if (!skip) {
 					if (!rs.next()) 
 						currentUser = rs.getString("name");
